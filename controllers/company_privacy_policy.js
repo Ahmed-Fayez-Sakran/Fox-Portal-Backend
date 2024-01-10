@@ -53,6 +53,7 @@ exports.create_Row =  async(req, res) => {
     try {
         //#region Global Variables
         langTitle = req.params.langTitle;
+        var val_Serial_Number = req.body.Serial_Number;
         var val_Policy_Title_En = req.body.Policy_Title_En;
         var val_Policy_Title_Ar = req.body.Policy_Title_Ar;
         //#endregion
@@ -64,7 +65,7 @@ exports.create_Row =  async(req, res) => {
             if (!tbl_Exist || tbl_Exist.Is_Suspended) {
                 //#region First Row insertion process in the collection
                 sentData = new tbl_Model({
-                    Serial_Number: "1",
+                    Serial_Number: val_Serial_Number,
                     Policy_Title_En: val_Policy_Title_En,
                     Policy_Title_Ar: val_Policy_Title_Ar,
                     Inserted_By: req.body.Inserted_By,

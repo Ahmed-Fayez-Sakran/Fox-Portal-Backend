@@ -5,24 +5,74 @@ module.exports.Update_Suspend_Status_Many_Rows = async (status, data , Updated_B
         const now_DateTime = require('../helpers/fun_datetime');
         var val_IDs = data;
         var Updated_DateTime =now_DateTime.get_DateTime()
-        //#endregion        
+        //#endregion
     
         //#region Define Models
         if (lkp_Table_Name=="sub_services_lkp") {
-            tbl_Model = require("../models/Sub_Services_LKP");
+          tbl_Model = require("../models/sub_services_lkp");
+        } else if (lkp_Table_Name=="addons_lkp") {
+          tbl_Model = require("../models/addons_lkp");
+        } else if (lkp_Table_Name=="business_organizations_lkp") {
+          tbl_Model = require("../models/business_organizations_lkp"); 
+        } else if (lkp_Table_Name=="services_with_addons") {
+          tbl_Model = require("../models/services_with_addons");
+        } else if (lkp_Table_Name=="main_services_lkp") {
+          tbl_Model = require("../models/main_services_lkp");
+        } else if (lkp_Table_Name=="trip_type_lkp") {
+          tbl_Model = require("../models/trip_type_lkp");
+        } else if (lkp_Table_Name=="rent_period") {
+          tbl_Model = require("../models/rent_period");
         }
+        else if (lkp_Table_Name=="full_day_package_log") {
+          tbl_Model = require("../models/full_day_package_log");
+        }
+        else if (lkp_Table_Name=="bus_trip_full_day_package_log") {
+          tbl_Model = require("../models/bus_trip_full_day_package_log");
+        }
+        else if (lkp_Table_Name=="valet_schedule_package_log") {
+          tbl_Model = require("../models/valet_schedule_package_log");
+        }
+        else if (lkp_Table_Name=="style_lkp") {
+          tbl_Model = require("../models/style_lkp");
+        }
+        else if (lkp_Table_Name=="brand_name_lkp") {
+            tbl_Model = require("../models/brand_name_lkp");
+        }   
+        else if (lkp_Table_Name=="fuel_type_lkp") {
+            tbl_Model = require("../models/fuel_type_lkp");
+        }
+        else if (lkp_Table_Name=="model_lkp") {
+            tbl_Model = require("../models/model_lkp");
+        }
+        else if (lkp_Table_Name=="year_manufacturing_lkp") {
+            tbl_Model = require("../models/year_manufacturing_lkp");
+        }
+        else if (lkp_Table_Name=="transmission_type_lkp") {
+            tbl_Model = require("../models/transmission_type_lkp");
+        }
+        else if (lkp_Table_Name=="courier_categories_lkp") {
+            tbl_Model = require("../models/courier_categories_lkp");
+        }
+
+        else if (lkp_Table_Name=="client_vehicles_advance_notice_period_log") {
+          tbl_Model = require("../models/client_vehicles_advance_notice_period_log");
+        }
+        else if (lkp_Table_Name=="business_vehicles_advance_notice_period_log") {
+            tbl_Model = require("../models/business_vehicles_advance_notice_period_log");
+        }
+        else if (lkp_Table_Name=="vehicles_classification") {
+            tbl_Model = require("../models/vehicles_classification");
+        }
+
+        
+        
         //#region Comments
-        //   else if (lkp_Table_Name=="addons_lkp") {
-        //       tbl_Model = require("../models/addons_lkp");
-        //   } 
+          
         //   else if (lkp_Table_Name=="airline_lkp") {
         //       tbl_Model = require("../models/airline_lkp");
         //   }
         //   else if (lkp_Table_Name=="brand_name_lkp") {
         //       tbl_Model = require("../models/brand_name_lkp");
-        //   }
-        //   else if (lkp_Table_Name=="business_organizations_lkp") {
-        //       tbl_Model = require("../models/business_organizations_lkp"); 
         //   }
         //   else if (lkp_Table_Name=="cancel_reason_lkp") {
         //       tbl_Model = require("../models/cancel_reason_lkp");
@@ -45,9 +95,7 @@ module.exports.Update_Suspend_Status_Many_Rows = async (status, data , Updated_B
         //   else if (lkp_Table_Name=="model_lkp") {
         //       tbl_Model = require("../models/model_lkp");
         //   }
-        //   else if (lkp_Table_Name=="main_services_lkp") {
-        //       tbl_Model = require("../models/main_services_lkp");
-        //   }
+        
         //   else if (lkp_Table_Name=="payment_method_lkp") {
         //       tbl_Model = require("../models/payment_method_lkp");
         //   }
@@ -60,12 +108,8 @@ module.exports.Update_Suspend_Status_Many_Rows = async (status, data , Updated_B
         //   else if (lkp_Table_Name=="style_lkp") {
         //       tbl_Model = require("../models/style_lkp");
         //   }
-        //   else if (lkp_Table_Name=="transmission_type_lkp") {
-        //       tbl_Model = require("../models/transmission_type_lkp");
-        //   }
-        //   else if (lkp_Table_Name=="trip_type_lkp") {
-        //       tbl_Model = require("../models/trip_type_lkp");
-        //   }
+        
+        
         //   else if (lkp_Table_Name=="vehicle_change_reasons_lkp") {
         //       tbl_Model = require("../models/vehicle_change_reasons_lkp");
         //   }
@@ -75,18 +119,8 @@ module.exports.Update_Suspend_Status_Many_Rows = async (status, data , Updated_B
         //   else if (lkp_Table_Name=="services_with_addons") {
         //       tbl_Model = require("../models/services_with_addons");
         //   }
-        //   else if (lkp_Table_Name=="full_day_package_log") {
-        //       tbl_Model = require("../models/sub_services_packages_log");
-        //   }
-        //   else if (lkp_Table_Name=="bus_trip_full_day_package_log") {
-        //       tbl_Model = require("../models/bus_trip_full_day_package_log");
-        //   }
-        //   else if (lkp_Table_Name=="valet_schedule_package_log") {
-        //       tbl_Model = require("../models/valet_schedule_package_log");
-        //   }
-        //   else if (lkp_Table_Name=="rent_period") {
-        //       tbl_Model = require("../models/rent_period");
-        //   }
+        
+        
         //   else if (lkp_Table_Name=="client_services_with_addons_prices_log") {
         //       tbl_Model = require("../models/client_services_with_addons_prices_log");
         //   }
@@ -122,13 +156,14 @@ module.exports.Update_Suspend_Status_Many_Rows = async (status, data , Updated_B
         } else {
             //#region suspend
             return await tbl_Model.updateMany(
-                { 
-                $and: [
-                    { Is_Suspended: false },
-                    { _id: { $in: val_IDs } }
+              { 
+                $and: 
+                [
+                  { Is_Suspended: false },
+                  { _id: { $in: val_IDs } }
                 ]
-                }, 
-                { $set: { Is_Suspended: true , Updated_By:Updated_By , Updated_DateTime:Updated_DateTime }}
+              }, 
+              { $set: { Is_Suspended: true , Updated_By:Updated_By , Updated_DateTime:Updated_DateTime }}
             )
             //#endregion
         }

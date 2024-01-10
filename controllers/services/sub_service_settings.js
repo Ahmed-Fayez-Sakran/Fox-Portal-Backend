@@ -1,7 +1,7 @@
 //#region Global Variables
 const tbl_Service = require("../../services/sub_service_settings");
 //const common_functions = require("../../services/lkp_common_functions");
-var tbl_Model = require("../../models/Sub_Services_LKP");
+var tbl_Model = require("../../models/sub_services_lkp");
 var langTitle = ""
 var lkp_Table_Name = ""
 const now_DateTime = require('../../helpers/fun_datetime');
@@ -68,6 +68,10 @@ exports.update_Row =  async(req, res) => {
         //#region Global Variables
         langTitle = req.params.langTitle;
         let val_ID = (req.params.id).trim();
+        var val_Sub_Service_Title_En = req.body.Sub_Service_Title_En;
+        var val_Sub_Service_Title_Ar = req.body.Sub_Service_Title_Ar;
+        var val_Updated_By = req.body.Updated_By;
+        var val_Is_Suspended = req.body.Is_Suspended;
         //#endregion
 
         new Promise(async (resolve, reject)=>{
@@ -76,73 +80,104 @@ exports.update_Row =  async(req, res) => {
         }).then((results) => {
 
             if (!results) {
-                //#region ID is not exist in DB msg 22
+                //#region ID is not exist in DB msg 14
                 new Promise(async (resolve, reject)=>{
-                    var result = await fun_handled_messages.get_handled_message(langTitle,22);
+                    var result = await fun_handled_messages.get_handled_message(langTitle,14);
                     resolve(result);
                 }).then((msg) => {        
                     res.status(400).json({ data: [] , message: msg, status: "wrong id" });
                 })
                 //#endregion
             } else {
-
-                new Promise(async (resolve, reject)=>{
-                    const exist = await fun_check_existancy.check_title_existancy("sub_services_lkp",val_ID,"update",req.body.Sub_Service_Title_Ar,req.body.Sub_Service_Title_En);
-                   resolve(exist);
-                }).then((title_Exist) => {
-                    if(title_Exist){
-                        //#region msg 23 already exist
+                //#region Check Title Existancy
+                let check_Ar_Title_Existancy_Promise = new Promise(async (resolve, reject)=>{
+                    var returnedList = await fun_check_existancy.check_title_existancy("sub_services_lkp" , val_ID , "update" , "ar" , val_Sub_Service_Title_Ar , "" , "" );
+                    resolve(returnedList);
+                });
+        
+                let check_En_Title_Existancy_Promise = new Promise(async (resolve, reject)=>{
+                    var returnedList = await fun_check_existancy.check_title_existancy("sub_services_lkp" , val_ID , "update" , "en" , val_Sub_Service_Title_En , "" , "" );
+                    resolve(returnedList);
+                });
+        
+                Promise.all([check_Ar_Title_Existancy_Promise , check_En_Title_Existancy_Promise]).then((results) => {
+        
+                    console.log("check_Ar_Title_Existancy_Promise = "+results[0])
+                    console.log("check_En_Title_Existancy_Promise = "+results[1])
+                    
+                    if (results[0]==true && results[1]==true) {
+                        //#region Both En & Ar already exist
                         new Promise(async (resolve, reject)=>{
-                            var result = await fun_handled_messages.get_handled_message(langTitle,23);
-                            resolve(result);
+                            var msg = await fun_handled_messages.get_handled_message(langTitle,23);
+                            resolve(msg)
                         }).then((msg) => {
-                            msg = msg.replace("Sub_Service_Title_En", req.body.Sub_Service_Title_En);
-                            msg = msg.replace("Sub_Service_Title_Ar", req.body.Sub_Service_Title_Ar);
-                            res.status(200).json({ data: [] , message: msg , status: "already exist" });
+                            msg = msg.replace("Sub_Service_Title_En", val_Sub_Service_Title_En);
+                            msg = msg.replace("Sub_Service_Title_Ar", val_Sub_Service_Title_Ar);
+                            res.status(200).json({ data:[], message: msg, status: "already exist" });
                         })
                         //#endregion
-                    }else {
+                    } else if (results[0]==true) {
+                        //#region Ar already exist
+                        new Promise(async (resolve, reject)=>{
+                            var msg = await fun_handled_messages.get_handled_message(langTitle,89);
+                        }).then((msg) => {
+                            msg = msg.replace("Sub_Service_Title_Ar", val_Sub_Service_Title_Ar);                            
+                            res.status(200).json({ data:[], message: msg, status: "already exist" });
+                        })
+                        //#endregion
+                    } else if (results[1]==true) {
+                        //#region En already exist
+                        new Promise(async (resolve, reject)=>{
+                            var msg = await fun_handled_messages.get_handled_message(langTitle,90);
+                        }).then((msg) => {
+                            msg = msg.replace("Sub_Service_Title_En", val_Sub_Service_Title_En);
+                            res.status(200).json({ data:[], message: msg, status: "already exist" });
+                        })
+                        //#endregion
+                    } else {
                         //#region update process
                         let recievedData = new tbl_Model({
-                            Sub_Service_Title_En: req.body.Sub_Service_Title_En,
-                            Sub_Service_Title_Ar: req.body.Sub_Service_Title_Ar,
-                            Updated_By: req.body.Updated_By,
+                            Sub_Service_Title_En: val_Sub_Service_Title_En,
+                            Sub_Service_Title_Ar: val_Sub_Service_Title_Ar,
+                            Updated_By: val_Updated_By,
                             Updated_DateTime: now_DateTime.get_DateTime(),
-                            Is_Suspended: req.body.Is_Suspended
-                          },{ new: true});
+                            Is_Suspended: val_Is_Suspended
+                        },{ new: true});
+
                         new Promise(async (resolve, reject)=>{
                             const newList = await fun_update_row.update_row(val_ID, "sub_services_lkp", recievedData , false);
                             resolve(newList);
-                        }).then((flg) => {
-                            if (!flg) {
+                        }).then((update_flg) => {
+                            if(!update_flg){
                                 //#region msg 2 update process failed
                                 new Promise(async (resolve, reject)=>{
                                     let result = await fun_handled_messages.get_handled_message(langTitle,2);
                                     resolve(result);
                                 }).then((msg) => {
                                     res.status(400).json({ data: [] , message: msg , status: "update failed" });    
-                                })          
+                                 })          
                                 //#endregion
-                            } else {
-                                //#region msg 24 update process successed
+                            }else {
+                                //#region msg update process successed
                                 new Promise(async (resolve, reject)=>{
                                     var result = await fun_handled_messages.get_handled_message(langTitle,24);
                                     resolve(result);
                                 }).then((msg) => {
                                     if (langTitle=="en") {
-                                        msg = msg.replace("Sub_Service_Title_En", req.body.Sub_Service_Title_En);
+                                        msg = msg.replace("Sub_Service_Title_En", val_Sub_Service_Title_En);
                                     } else {
-                                        msg = msg.replace("Sub_Service_Title_Ar", req.body.Sub_Service_Title_Ar);
+                                        msg = msg.replace("Sub_Service_Title_Ar", val_Sub_Service_Title_Ar);
                                     }
-                                    res.status(200).json({ data: flg , message: msg , status: "updated successed" });
+                                    res.status(200).json({ data: update_flg , message: msg , status: "updated successed" });
                                 })
                                 //#endregion
                             }
                         })
                         //#endregion
                     }
-                })
 
+                });
+                //#endregion                
             }
 
         })
@@ -154,7 +189,104 @@ exports.update_Row =  async(req, res) => {
 
 };
 
-exports.updateMany_Rows_Data =  async(req, res) => {
+exports.update_Suspend_Status_One_Row =  async(req, res) => {
+
+    try {
+        //#region Global Variables
+        langTitle = req.params.langTitle;
+        let val_ID = req.body.id;
+        var status = req.params.status;
+        var val_Sub_Service_Title_En = req.body.Sub_Service_Title_En;
+        var val_Sub_Service_Title_Ar = req.body.Sub_Service_Title_Ar;
+        var val_Updated_By = req.body.Updated_By;
+        var val_Is_Suspended = false;
+        //#endregion
+
+        new Promise(async (resolve, reject)=>{
+            let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("sub_services_lkp",val_ID);
+            resolve(returnedList);
+        }).then((returned_ID) => {
+            if (!returned_ID) {
+                //#region ID is not exist in DB msg 14
+                new Promise(async (resolve, reject)=>{
+                    var result = await fun_handled_messages.get_handled_message(langTitle,14);
+                    resolve(result);
+                }).then((msg) => {        
+                    res.status(400).json({ data: [] , message: msg, status: "wrong id" });
+                })
+                //#endregion
+            } else {
+                //#region ID exist in DB
+                if ( (status!="activate") && (status!="suspend") ){
+                    //#region wrong url msg 62
+                    new Promise(async (resolve, reject)=>{
+                        var result = await fun_handled_messages.get_handled_message(langTitle,62);
+                        resolve(result);
+                    }).then((msg) => {        
+                        res.status(400).json({ data: [] , message: msg, status: "wrong url" });
+                    })
+                    //#endregion
+                } else {
+                    if (status=="activate") {
+                        val_Is_Suspended = false;
+                    } else {
+                        val_Is_Suspended = true;
+                    }
+                    //#region update process
+                    let recievedData = new tbl_Model({
+                        Updated_By: val_Updated_By,
+                        Updated_DateTime: now_DateTime.get_DateTime(),
+                        Is_Suspended: val_Is_Suspended
+                    },{ new: true});
+    
+                    new Promise(async (resolve, reject)=>{
+                        const newList = await fun_update_row.update_row(val_ID, "sub_services_lkp", recievedData , false);
+                        resolve(newList);
+                    }).then((update_flg) => {
+                        if (!update_flg) {
+                            //#region msg 2 update process failed
+                            new Promise(async (resolve, reject)=>{
+                            let result = await fun_handled_messages.get_handled_message(langTitle,2);
+                            resolve(result);
+                            }).then((msg) => {
+                                res.status(400).json({ data: [] , message: msg , status: "update failed" });    
+                            })          
+                            //#endregion
+                        } else {
+                            //#region msg update process successed
+                            new Promise(async (resolve, reject)=>{
+                                let result=""
+                                if (status=="activate") {
+                                    result = await fun_handled_messages.get_handled_message(langTitle,25);
+                                } else {
+                                    result = await fun_handled_messages.get_handled_message(langTitle,26);
+                                }
+                                resolve(result);
+                            }).then((msg) => {
+                                if (langTitle=="en") {
+                                    msg = msg.replace("Sub_Service_Title_En", val_Sub_Service_Title_En);
+                                } else {
+                                    msg = msg.replace("Sub_Service_Title_Ar", val_Sub_Service_Title_Ar);
+                                }
+                                res.status(200).json({ data: update_flg , message: msg , status: "updated successed" });
+                            })
+                            //#endregion
+                        }
+                    })
+                    //#endregion
+                }
+                //#endregion
+            }
+        })
+
+    } catch (err) {
+        logger.error(err.message);
+        res.status(500).json({ data:[] , message:err.message , status: "error" });
+    }
+
+};
+
+exports.update_suspend_status_many_rows =  async(req, res) => {
 
     try {
         //#region Global Variables

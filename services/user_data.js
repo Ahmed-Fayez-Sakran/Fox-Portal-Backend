@@ -394,8 +394,8 @@ exports.List_Users_Inside_Organization = async (val_Business_Organization_ID,pag
     try {
         //#region Set Recieved User Roles
         var pageSize = 10 ;
-        var skip = (pageNumber - 1) * pageSize;         
-         //#endregion
+        var skip = (pageNumber - 1) * pageSize;
+        //#endregion
         
         if (suspendStatus.trim()==="only-true") 
         {

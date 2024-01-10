@@ -85,7 +85,7 @@ const uploadOptions_1 = multer({ storage: storage_1 });
 //http://localhost:27017/api/v1/en/user_data
 //http://localhost:27017/api/v1/:langTitle/user_data
 //#endregion
-router.route("/:langTitle/user_data").get(get_All_User)
+//router.route("/:langTitle/user_data").get(get_All_User)
  
 //#region API Links Explanation
 //http://localhost:27017/api/v1/en/user_data/check_user_existancy
@@ -97,7 +97,7 @@ router.route("/:langTitle/user_data/check_user_existancy").get(check_User_Exista
 //http://localhost:27017/api/v1/en/user_data
 //http://localhost:27017/api/v1/:langTitle/user_data
 //#endregion
-router.route("/:langTitle/user_data").post(uploadOptions.single('Photo_Organization'),create_User)//Photo_Profile
+router.route("/:langTitle/user_data").post(uploadOptions_1.single('Photo_Organization'),create_User)//Photo_Profile
 
 //#region API Links Explanation
 //http://localhost:27017/api/v1/en/user_data/signin
@@ -147,7 +147,7 @@ router.route("/:langTitle/user_data/resend_code_to_phone").post(Resend_Code_To_P
 //http://localhost:27017/api/v1/en/user_data/6558833669bf6e1a13fbff50
 //http://localhost:27017/api/v1/:langTitle/user_data/:user_id
 //#endregion
-router.route("/:langTitle/user_data/:user_id").get(get_Personal_Data)
+//router.route("/:langTitle/user_data/:user_id").get(get_Personal_Data)
 
 //#region API Links Explanation
 //http://localhost:27017/api/v1/en/user_data/update_password

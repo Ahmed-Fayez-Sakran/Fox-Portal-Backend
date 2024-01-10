@@ -12,7 +12,7 @@ const Business_Organizations_LKP_Schema = mongoose.Schema({
     
     Organization_Location:    { type: String, required: true, } ,
 
-    Photo_Organization:       { type: String,  required: false, default:'defualt photo path' } ,
+    Photo_Organization:       { type: String,  required: false, default:'./public/business_organizations_photos/business_default.jpg' } ,
 
     Inserted_By:              { type: Number,  required: true, } ,
 

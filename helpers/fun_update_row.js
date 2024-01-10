@@ -15,10 +15,56 @@ module.exports.update_row = async (id , lkp_Table_Name , tblObject , is_Delete_O
             tbl_Model = require("../models/user_data");
         }
         else if (lkp_Table_Name=="sub_services_lkp") {
-            tbl_Model = require("../models/Sub_Services_LKP");
+            tbl_Model = require("../models/sub_services_lkp");
         }
         else if (lkp_Table_Name=="company_privacy_policy") {
             tbl_Model = require("../models/company_privacy_policy");
+        }
+        else if (lkp_Table_Name=="addons_lkp") {
+            tbl_Model = require("../models/addons_lkp");
+        }
+        else if (lkp_Table_Name=="services_with_addons") {
+            tbl_Model = require("../models/services_with_addons");
+        }
+        else if (lkp_Table_Name=="main_services_lkp") {
+            tbl_Model = require("../models/main_services_lkp");
+        }
+        else if (lkp_Table_Name=="trip_type_lkp") {
+            tbl_Model = require("../models/trip_type_lkp");
+        }
+        else if (lkp_Table_Name=="rent_period") {
+            tbl_Model = require("../models/rent_period");
+        }        
+        else if (lkp_Table_Name=="full_day_package_log") {
+            tbl_Model = require("../models/full_day_package_log");
+        } 
+        else if (lkp_Table_Name=="bus_trip_full_day_package_log") {
+            tbl_Model = require("../models/bus_trip_full_day_package_log");
+        } 
+        else if (lkp_Table_Name=="valet_schedule_package_log") {
+            tbl_Model = require("../models/valet_schedule_package_log");
+        }
+        
+        else if (lkp_Table_Name=="style_lkp") {
+            tbl_Model = require("../models/style_lkp");
+        }
+        else if (lkp_Table_Name=="brand_name_lkp") {
+            tbl_Model = require("../models/brand_name_lkp");
+        }   
+        else if (lkp_Table_Name=="fuel_type_lkp") {
+            tbl_Model = require("../models/fuel_type_lkp");
+        }
+        else if (lkp_Table_Name=="model_lkp") {
+            tbl_Model = require("../models/model_lkp");
+        }
+        else if (lkp_Table_Name=="year_manufacturing_lkp") {
+            tbl_Model = require("../models/year_manufacturing_lkp");
+        }
+        else if (lkp_Table_Name=="transmission_type_lkp") {
+            tbl_Model = require("../models/transmission_type_lkp");
+        }
+        else if (lkp_Table_Name=="courier_categories_lkp") {
+            tbl_Model = require("../models/courier_categories_lkp");
         }
         
         else {

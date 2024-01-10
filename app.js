@@ -58,12 +58,118 @@ const api = process.env.API_URL;
 
     //#region services
 
+        //#region Add-ons
+        const Add_ons_Routes = require("./routes/services/add_ons");
+        app.use(`${api}/services/add_ons/`, Add_ons_Routes);
+        //#endregion
+
+        //#region Services_With_Addons
+        const service_with_add_ons_Routes = require("./routes/services/service_with_add_ons");
+        app.use(`${api}/services/service_with_add_ons/`, service_with_add_ons_Routes);
+        //#endregion
+
+        //#region Main Service Settings
+        const main_service_Routes = require("./routes/services/main_service_settings");
+        app.use(`${api}/services/main_service_settings/`, main_service_Routes);
+        //#endregion
+
         //#region Subservice Settings
         const subservice_settings_Routes = require("./routes/services/sub_service_settings");
         app.use(`${api}/services/sub_service_settings/`, subservice_settings_Routes);
         //#endregion
 
+        //#region Trip Type Settings
+        const trip_type_settings_Routes = require("./routes/services/trip_type_settings");
+        app.use(`${api}/services/trip_type_settings/`, trip_type_settings_Routes);
+        //#endregion
+
+        //#region Rent Period
+        const Rent_Period_Routes = require("./routes/services/rent_period");
+        app.use(`${api}/services/rent_period/`, Rent_Period_Routes);
+        //#endregion
+
+        //#region Full Day Package Log
+        const full_day_package_Routes = require("./routes/services/full_day_package_log");
+        app.use(`${api}/services/full_day_package_log/`, full_day_package_Routes);
+        //#endregion
+
+        //#region Bus Trip Full Day Package Log
+        const bus_trip_full_day_package_Routes = require("./routes/services/bus_trip_full_day_package_log");
+        app.use(`${api}/services/bus_trip_full_day_package_log/`, bus_trip_full_day_package_Routes);
+        //#endregion
+
+        //#region Bus Trip Full Day Package Log
+        const Valet_Schedule_Package_Log_Routes = require("./routes/services/valet_schedule_package_log");
+        app.use(`${api}/services/valet_schedule_package_log/`, Valet_Schedule_Package_Log_Routes);
+        //#endregion
+
+        //#region Service Prices
+        const service_prices_Routes = require("./routes/services/service_prices");
+        app.use(`${api}/services/service_prices/`, service_prices_Routes);
+        //#endregion 
+
     //#endregion
+
+
+    //#region Vehicles
+
+        //#region Vehicles Data
+        const vehicles_data_Routes = require("./routes/vehicles/vehicles_data");
+        app.use(`${api}/vehicles/vehicles_data/`, vehicles_data_Routes);
+        //#endregion
+        
+        //#region Vehicle / Vehicle Style List
+        const vehicle_style_list_Routes = require("./routes/vehicles/vehicle_style_list");
+        app.use(`${api}/vehicles/vehicle_style_list/`, vehicle_style_list_Routes);
+        //#endregion
+        
+        //#region Vehicle / Vehicle Brand List
+        const vehicle_brand_list_Routes = require("./routes/vehicles/vehicle_brand_list");
+        app.use(`${api}/vehicles/vehicle_brand_list/`, vehicle_brand_list_Routes);
+        //#endregion
+        
+        //#region Vehicle / Vehicle Model List
+        const vehicle_model_list_Routes = require("./routes/vehicles/vehicle_model_list");
+        app.use(`${api}/vehicles/vehicle_model_list/`, vehicle_model_list_Routes);
+        //#endregion
+        
+        //#region Vehicle / Manufacture Year Setup
+        const manufacture_year_setup_Routes = require("./routes/vehicles/manufacture_year_setup");
+        app.use(`${api}/vehicles/manufacture_year_setup/`, manufacture_year_setup_Routes);
+        //#endregion
+        
+        //#region Vehicle / Transmission Type Setup
+        const transmission_type_setup_Routes = require("./routes/vehicles/transmission_type_setup");
+        app.use(`${api}/vehicles/transmission_type_setup/`, transmission_type_setup_Routes);
+        //#endregion
+        
+        //#region Vehicle / Fuel Type Setup
+        const fuel_type_setup_Routes = require("./routes/vehicles/fuel_type_setup");
+        app.use(`${api}/vehicles/fuel_type_setup/`, fuel_type_setup_Routes);
+        //#endregion
+        
+        //#region Vehicle / Courier Categories Setup
+        const courier_categories_setup_Routes = require("./routes/vehicles/courier_categories_setup");
+        app.use(`${api}/vehicles/courier_categories_setup/`, courier_categories_setup_Routes);
+        //#endregion
+        
+        //#region Vehicles / Vehicle Settings
+        const vehicle_settings_Routes = require("./routes/vehicles/vehicle_settings");
+        app.use(`${api}/vehicles/vehicle_settings/`, vehicle_settings_Routes);
+        //#endregion
+        
+        //#region Vehicles / Vehicle Classifications
+        const vehicle_classifications_Routes = require("./routes/vehicles/vehicle_classifications");
+        app.use(`${api}/vehicles/vehicle_classifications/`, vehicle_classifications_Routes);
+        //#endregion
+        
+        //#region Vehicles / Vehicles
+        const vehicles_Routes = require("./routes/vehicles/vehicles");
+        app.use(`${api}/vehicles/vehicles/`, vehicles_Routes);
+        //#endregion
+
+    //#endregion
+
 
 
 

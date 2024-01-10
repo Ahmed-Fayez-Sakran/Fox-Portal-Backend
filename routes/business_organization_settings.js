@@ -4,6 +4,9 @@ const {
 	Edit_Business_Organization,
     Add_User,
     Add_Business_Organization,
+        
+    update_Suspend_Status_One_Row,
+    update_Suspend_Status_Many_Rows,
 } = require("../controllers/business_organization_settings");
  
 const router = express.Router();
@@ -82,6 +85,22 @@ router.route("/:langTitle/business_organization_settings/add_user_data").post(up
 //#endregion
 router.route("/:langTitle/business_organization_settings").post(uploadOptions.single('Photo_Organization'),Add_Business_Organization);
 
+
+
+ 
+//#region API Links Explanation
+//http://localhost:27017/api/v1/en/business_organization_settings/update_suspend_status_one_row/activate
+//http://localhost:27017/api/v1/:langTitle/business_organization_settings/update_suspend_status_one_row/:status
+//#endregion
+router.route("/:langTitle/business_organization_settings/update_suspend_status_one_row/:status").put(update_Suspend_Status_One_Row);
+
+ 
+//#region API Links Explanation
+//http://localhost:27017/api/v1/en/business_organization_settings/update_suspend_status_many_rows/activate
+//http://localhost:27017/api/v1/:langTitle/business_organization_settings/update_suspend_status_many_rows/:status
+//#endregion
+router.route("/:langTitle/business_organization_settings/update_suspend_status_many_rows/:status").put(update_Suspend_Status_Many_Rows);
+ 
 
 
 module.exports = router;

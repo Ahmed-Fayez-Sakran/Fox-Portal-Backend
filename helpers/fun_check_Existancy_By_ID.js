@@ -12,20 +12,64 @@ module.exports.check_Existancy_By_ID = async (sent_Table,val_ID) => {
         }else if (sent_Table=="user_data") {
             tbl_Model = require("../models/user_data");
         }else if (sent_Table=="sub_services_lkp") {
-            tbl_Model = require("../models/Sub_Services_LKP");
+            tbl_Model = require("../models/sub_services_lkp");
+        }else if (sent_Table=="addons_lkp") {
+            tbl_Model = require("../models/addons_lkp");
+        } else if (sent_Table=="services_with_addons") {
+            tbl_Model = require("../models/services_with_addons");
+        } else if (sent_Table=="main_services_lkp") {
+            tbl_Model = require("../models/main_services_lkp");
+        } else if (sent_Table=="trip_type_lkp") {
+            tbl_Model = require("../models/trip_type_lkp");
+        } else if (sent_Table=="rent_period") {
+            tbl_Model = require("../models/rent_period");
+        } else if (sent_Table=="full_day_package_log") {
+            tbl_Model = require("../models/full_day_package_log");
+        } else if (sent_Table=="bus_trip_full_day_package_log") {
+            tbl_Model = require("../models/bus_trip_full_day_package_log");
+        } else if (sent_Table=="valet_schedule_package_log") {
+            tbl_Model = require("../models/valet_schedule_package_log");
+        }
+
+        else if (sent_Table=="style_lkp") {
+            tbl_Model = require("../models/style_lkp");
+        }
+        else if (sent_Table=="brand_name_lkp") {
+            tbl_Model = require("../models/brand_name_lkp");
+        }   
+        else if (sent_Table=="fuel_type_lkp") {
+            tbl_Model = require("../models/fuel_type_lkp");
+        }
+        else if (sent_Table=="model_lkp") {
+            tbl_Model = require("../models/model_lkp");
+        }
+        else if (sent_Table=="year_manufacturing_lkp") {
+            tbl_Model = require("../models/year_manufacturing_lkp");
+        }
+        else if (sent_Table=="transmission_type_lkp") {
+            tbl_Model = require("../models/transmission_type_lkp");
+        }
+        else if (sent_Table=="courier_categories_lkp") {
+            tbl_Model = require("../models/courier_categories_lkp");
+        }
+
+        else if (sent_Table=="vehicles_data") {
+            tbl_Model = require("../models/vehicles_data");
+        }
+        else if (sent_Table=="vehicles_categories_per_subservices") {
+            tbl_Model = require("../models/vehicles_categories_per_subservices");
         }
         
 
-         //#region Comments
+
+
+        //#region Comments
         // else if (sent_Table=="addons_lkp") {
         //     tbl_Model = require("../models/addons_lkp");
         // } 
         // else if (sent_Table=="airline_lkp") {
         //     tbl_Model = require("../models/airline_lkp");
-        // }
-        // else if (sent_Table=="brand_name_lkp") {
-        //     tbl_Model = require("../models/brand_name_lkp");
-        // }        
+        // }             
         // else if (sent_Table=="cancel_reason_lkp") {
         //     tbl_Model = require("../models/cancel_reason_lkp");
         // }
@@ -44,15 +88,8 @@ module.exports.check_Existancy_By_ID = async (sent_Table,val_ID) => {
         // else if (sent_Table=="extra_reason_lkp") {
         //     tbl_Model = require("../models/extra_reason_lkp");
         // }
-        // else if (sent_Table=="fuel_type_lkp") {
-        //     tbl_Model = require("../models/fuel_type_lkp");
-        // }
-        // else if (sent_Table=="model_lkp") {
-        //     tbl_Model = require("../models/model_lkp");
-        // }
-        // else if (sent_Table=="main_services_lkp") {
-        //     tbl_Model = require("../models/main_services_lkp");
-        // }
+        
+        
         // else if (sent_Table=="payment_method_lkp") {
         //     tbl_Model = require("../models/payment_method_lkp");
         // }
@@ -61,25 +98,18 @@ module.exports.check_Existancy_By_ID = async (sent_Table,val_ID) => {
         // }
         // else if (sent_Table=="report_reason_lkp") {
         //     tbl_Model = require("../models/report_reason_lkp");
-        // }
-        // else if (sent_Table=="style_lkp") {
-        //     tbl_Model = require("../models/style_lkp");
-        // }
+        // }      
         // else if (sent_Table=="sub_services_lkp") {
         //     tbl_Model = require("../models/Sub_Services_LKP");
         // }
         // else if (sent_Table=="transmission_type_lkp") {
         //     tbl_Model = require("../models/transmission_type_lkp");
         // }
-        // else if (sent_Table=="trip_type_lkp") {
-        //     tbl_Model = require("../models/trip_type_lkp");
-        // }
+        
         // else if (sent_Table=="vehicle_change_reasons_lkp") {
         //     tbl_Model = require("../models/vehicle_change_reasons_lkp");
         // }
-        // else if (sent_Table=="year_manufacturing_lkp") {
-        //     tbl_Model = require("../models/year_manufacturing_lkp");
-        // }
+        
         // else if (sent_Table=="order_status_lkp") {
         //     tbl_Model = require("../models/order_status_lkp");
         // }
@@ -122,15 +152,8 @@ module.exports.check_Existancy_By_ID = async (sent_Table,val_ID) => {
         //     tbl_Model = require("../models/user_data");
         // } else if (sent_Table=="services_with_addons") {
         //     tbl_Model = require("../models/services_with_addons");
-        // } else if (sent_Table=="full_day_package_log") {
-        //     tbl_Model = require("../models/sub_services_packages_log");
-        // } else if (sent_Table=="bus_trip_full_day_package_log") {
-        //     tbl_Model = require("../models/bus_trip_full_day_package_log");
-        // } else if (sent_Table=="valet_schedule_package_log") {
-        //     tbl_Model = require("../models/valet_schedule_package_log");
-        // } else if (sent_Table=="rent_period") {
-        //     tbl_Model = require("../models/rent_period");
-        // } 
+        // }
+        
         //#endregion  
         else {
             tbl_Model = ""

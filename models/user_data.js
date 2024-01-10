@@ -20,7 +20,7 @@ const User_Data_Schema = mongoose.Schema({
 
     Location: { type: String,  required: true, } ,
 
-    Photo_Profile: { type: String,  required: false, default: process.env.Main_URL + "public/uploads/user_default.png" } , 
+    Photo_Profile: { type: String,  required: false, default: process.env.Main_URL + "./public/user_personal_photos/user_default.jpg" } , 
 
     Inserted_DateTime:{ type: String,  required: true, } ,  
 

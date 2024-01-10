@@ -7,22 +7,66 @@ module.exports.check_Existancy_By_List_IDS = async (sent_Table,val_Array_IDs) =>
         var is_Valid_Size = 0
 
         //#region Assign tbl_Model for Tables
-        if (sent_Table=="business_organizations_lkp") { 
+        if (sent_Table=="business_organizations_lkp") {
             tbl_Model = require("../models/business_organizations_lkp");  
         }
         else if (sent_Table=="sub_services_lkp") {
-            tbl_Model = require("../models/Sub_Services_LKP");
+            tbl_Model = require("../models/sub_services_lkp");
         }
+        else if (sent_Table=="addons_lkp") {
+            tbl_Model = require("../models/addons_lkp");
+        }
+        else if (sent_Table=="services_with_addons") {
+            tbl_Model = require("../models/services_with_addons");
+        }
+        else if (sent_Table=="main_services_lkp") {
+            tbl_Model = require("../models/main_services_lkp");
+        }
+        else if (sent_Table=="trip_type_lkp") {
+            tbl_Model = require("../models/trip_type_lkp");
+        }
+        else if (sent_Table=="rent_period") {
+            tbl_Model = require("../models/rent_period");
+        }
+        else if (sent_Table=="full_day_package_log") {
+            tbl_Model = require("../models/full_day_package_log");
+        }
+        else if (sent_Table=="bus_trip_full_day_package_log") {
+            tbl_Model = require("../models/bus_trip_full_day_package_log");
+        }
+        else if (sent_Table=="valet_schedule_package_log") {
+            tbl_Model = require("../models/valet_schedule_package_log");
+        }
+
+        else if (sent_Table=="style_lkp") {
+            tbl_Model = require("../models/style_lkp");
+        }
+        else if (sent_Table=="brand_name_lkp") {
+            tbl_Model = require("../models/brand_name_lkp");
+        }   
+        else if (sent_Table=="fuel_type_lkp") {
+            tbl_Model = require("../models/fuel_type_lkp");
+        }
+        else if (sent_Table=="model_lkp") {
+            tbl_Model = require("../models/model_lkp");
+        }
+        else if (sent_Table=="year_manufacturing_lkp") {
+            tbl_Model = require("../models/year_manufacturing_lkp");
+        }
+        else if (sent_Table=="transmission_type_lkp") {
+            tbl_Model = require("../models/transmission_type_lkp");
+        }
+        else if (sent_Table=="courier_categories_lkp") {
+            tbl_Model = require("../models/courier_categories_lkp");
+        }
+        
         //#region comments
         // else if (sent_Table=="airline_lkp") {
         //     tbl_Model = require("../models/airline_lkp");
         // }
         // else if (sent_Table=="brand_name_lkp") {
         //     tbl_Model = require("../models/brand_name_lkp");
-        // }
-        // else if (sent_Table=="addons_lkp") {
-        //     tbl_Model = require("../models/addons_lkp");
-        // } 
+        // }        
         // else if (sent_Table=="cancel_reason_lkp") {
         //     tbl_Model = require("../models/cancel_reason_lkp");
         // }
@@ -47,9 +91,7 @@ module.exports.check_Existancy_By_List_IDS = async (sent_Table,val_Array_IDs) =>
         // else if (sent_Table=="model_lkp") {
         //     tbl_Model = require("../models/model_lkp");
         // }
-        // else if (sent_Table=="main_services_lkp") {
-        //     tbl_Model = require("../models/main_services_lkp");
-        // }
+        
         // else if (sent_Table=="payment_method_lkp") {
         //     tbl_Model = require("../models/payment_method_lkp");
         // }
@@ -62,12 +104,8 @@ module.exports.check_Existancy_By_List_IDS = async (sent_Table,val_Array_IDs) =>
         // else if (sent_Table=="style_lkp") {
         //     tbl_Model = require("../models/style_lkp");
         // }
-        // else if (sent_Table=="transmission_type_lkp") {
-        //     tbl_Model = require("../models/transmission_type_lkp");
-        // }
-        // else if (sent_Table=="trip_type_lkp") {
-        //     tbl_Model = require("../models/trip_type_lkp");
-        // }
+        
+        
         // else if (sent_Table=="vehicle_change_reasons_lkp") {
         //     tbl_Model = require("../models/vehicle_change_reasons_lkp");
         // }
@@ -80,18 +118,8 @@ module.exports.check_Existancy_By_List_IDS = async (sent_Table,val_Array_IDs) =>
         // else if (sent_Table=="services_with_addons") {
         //     tbl_Model = require("../models/services_with_addons");
         // }
-        // else if (sent_Table=="full_day_package_log") {
-        //     tbl_Model = require("../models/sub_services_packages_log");
-        // }
-        // else if (sent_Table=="bus_trip_full_day_package_log") {
-        //     tbl_Model = require("../models/bus_trip_full_day_package_log");
-        // }
-        // else if (sent_Table=="valet_schedule_package_log") {
-        //     tbl_Model = require("../models/valet_schedule_package_log");
-        // }
-        // else if (sent_Table=="rent_period") {
-        //     tbl_Model = require("../models/rent_period");
-        // }
+        
+       
         // else if (sent_Table=="client_services_with_addons_prices_log") {
         //     tbl_Model = require("../models/client_services_with_addons_prices_log");
         // }
@@ -115,14 +143,15 @@ module.exports.check_Existancy_By_List_IDS = async (sent_Table,val_Array_IDs) =>
 
         for (i in val_Array_IDs) {
             val_ID = val_Array_IDs[i];
-            if (mongoose.Types.ObjectId.isValid(val_ID)) {
+            if (mongoose.Types.ObjectId.isValid(val_ID)) { console.log("val_ID = "+val_ID)
                 is_Valid_Size = is_Valid_Size+1
             } 
         }
 
-        if (is_Valid_Size==val_Array_IDs.length) {
+        if (is_Valid_Size==val_Array_IDs.length) {console.log("right")
             let returned_Date =  "";
-            returned_Date =  await tbl_Model.find({ _id: { $in: val_Array_IDs } });
+            returned_Date =  await tbl_Model.find({ _id: { $in: val_Array_IDs } });//.count()
+            console.log("returned_Date = "+returned_Date.length)
             return (returned_Date.length <=0) ? false : true; 
         } 
         else {
