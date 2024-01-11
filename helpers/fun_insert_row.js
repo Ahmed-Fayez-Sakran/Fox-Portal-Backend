@@ -76,6 +76,12 @@ module.exports.insert_row = async (lkp_Table_Name,row_Data_Object) => {
         else if (lkp_Table_Name=="vehicles_classification") {
             tbl_Model = require("../models/vehicles_classification");
         }
+        else if (lkp_Table_Name=="vehicles_data") {
+            tbl_Model = require("../models/vehicles_data");
+        }
+        else if (lkp_Table_Name=="vehicle_data_details") {
+            tbl_Model = require("../models/vehicle_data_details");
+        }
         
         
         else {

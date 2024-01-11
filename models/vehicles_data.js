@@ -26,8 +26,6 @@ const Vehicles_Data_Schema = mongoose.Schema({
 
     Fuel_Type_ID: { type: mongoose.Schema.Types.ObjectId, ref: 'Fuel_Type_LKP', required:true, },
 
-    Is_Outsourcing: { type: Boolean, required: true, },
-
     Inserted_By:      { type: Number,  required: true, } ,
 
     Inserted_DateTime:{ type: String,  required: true, } ,    

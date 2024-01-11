@@ -59,6 +59,14 @@ module.exports.check_Existancy_By_List_IDS = async (sent_Table,val_Array_IDs) =>
         else if (sent_Table=="courier_categories_lkp") {
             tbl_Model = require("../models/courier_categories_lkp");
         }
+        else if (sent_Table=="vehicles_categories_per_subservices") {
+            tbl_Model = require("../models/vehicles_categories_per_subservices");
+        }
+        else if (sent_Table=="vehicle_data_details") {
+            tbl_Model = require("../models/vehicle_data_details");
+        }
+
+        
         
         //#region comments
         // else if (sent_Table=="airline_lkp") {

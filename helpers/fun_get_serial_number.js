@@ -83,6 +83,9 @@ module.exports.get_Serial_Number = async (lkp_Table_Name) => {
         else if (lkp_Table_Name=="vehicles_classification") {
             tbl_Model = require("../models/vehicles_classification");
         }
+        else if (lkp_Table_Name=="vehicle_data_details") {
+            tbl_Model = require("../models/vehicle_data_details");
+        }
         
         
         //#endregion

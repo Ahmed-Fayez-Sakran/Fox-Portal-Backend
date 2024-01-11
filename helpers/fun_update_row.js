@@ -66,6 +66,19 @@ module.exports.update_row = async (id , lkp_Table_Name , tblObject , is_Delete_O
         else if (lkp_Table_Name=="courier_categories_lkp") {
             tbl_Model = require("../models/courier_categories_lkp");
         }
+        else if (lkp_Table_Name=="vehicles_categories_per_subservices") {
+            tbl_Model = require("../models/vehicles_categories_per_subservices");
+        }
+        else if (lkp_Table_Name=="vehicles_classification") {
+            tbl_Model = require("../models/vehicles_classification");
+        }
+        else if (lkp_Table_Name=="vehicles_data") {
+            tbl_Model = require("../models/vehicles_data");
+        } 
+        else if (lkp_Table_Name=="vehicle_data_details") {
+            tbl_Model = require("../models/vehicle_data_details");
+        } 
+               
         
         else {
             return"";

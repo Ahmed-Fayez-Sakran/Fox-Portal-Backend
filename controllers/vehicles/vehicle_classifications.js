@@ -418,6 +418,95 @@ exports.Insert_Vehicle_Inside_Category =  async(req, res) => {
     }
 };
 
+exports.update_Suspend_Status_vehicle_classification =  async(req, res) => {
+
+    try {
+        //#region Global Variables
+        langTitle = req.params.langTitle;
+        let val_ID = req.body.id;
+        var status = req.params.status;
+        var val_Is_Suspended = false;
+        var val_Updated_By = req.body.Updated_By;
+        //#endregion
+
+        new Promise(async (resolve, reject)=>{
+            let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("vehicles_classification",val_ID);
+            resolve(returnedList);
+        }).then((returned_ID) => {
+            if (!returned_ID) {
+                //#region ID is not exist in DB msg 14
+                new Promise(async (resolve, reject)=>{
+                    var result = await fun_handled_messages.get_handled_message(langTitle,14);
+                    resolve(result);
+                }).then((msg) => {        
+                    res.status(400).json({ data: [] , message: msg, status: "wrong id" });
+                })
+                //#endregion
+            } else {
+                //#region ID exist in DB
+                if ( (status!="activate") && (status!="suspend") ){
+                    //#region wrong url msg 62
+                    new Promise(async (resolve, reject)=>{
+                        var result = await fun_handled_messages.get_handled_message(langTitle,62);
+                        resolve(result);
+                    }).then((msg) => {        
+                        res.status(400).json({ data: [] , message: msg, status: "wrong url" });
+                    })
+                    //#endregion
+                } else {
+                    if (status=="activate") {
+                        val_Is_Suspended = false;
+                    } else {
+                        val_Is_Suspended = true;
+                    }
+                    //#region update process
+                    let recievedData = new tbl_Model({
+                        Updated_By: val_Updated_By,
+                        Updated_DateTime: now_DateTime.get_DateTime(),
+                        Is_Suspended: val_Is_Suspended
+                    },{ new: true});
+    
+                    new Promise(async (resolve, reject)=>{
+                        const newList = await fun_update_row.update_row(val_ID, "vehicles_classification", recievedData , false);
+                        resolve(newList);
+                    }).then((update_flg) => {
+                        if (!update_flg) {
+                            //#region msg 2 update process failed
+                            new Promise(async (resolve, reject)=>{
+                            let result = await fun_handled_messages.get_handled_message(langTitle,2);
+                            resolve(result);
+                            }).then((msg) => {
+                                res.status(400).json({ data: [] , message: msg , status: "update failed" });    
+                            })          
+                            //#endregion
+                        } else {
+                            //#region msg update process successed
+                            new Promise(async (resolve, reject)=>{
+                                let result=""
+                                if (status=="activate") {
+                                    result = await fun_handled_messages.get_handled_message(langTitle,224);
+                                } else {
+                                    result = await fun_handled_messages.get_handled_message(langTitle,225);
+                                }
+                                resolve(result);
+                            }).then((msg) => {
+                                res.status(200).json({ data: update_flg , message: msg , status: "updated successed" });
+                            })
+                            //#endregion
+                        }
+                    })
+                    //#endregion
+                }
+                //#endregion
+            }
+        })
+
+    } catch (err) {
+        logger.error(err.message);
+        res.status(500).json({ data:[] , message:err.message , status: "error" });
+    }
+
+};
 
 exports.update_Row =  async(req, res) => {
 
@@ -464,7 +553,7 @@ exports.update_Row =  async(req, res) => {
                     if (results[0]==true && results[1]==true) {
                         //#region Both En & Ar already exist
                         new Promise(async (resolve, reject)=>{
-                            var msg = await fun_handled_messages.get_handled_message(langTitle,108);
+                            var msg = await fun_handled_messages.get_handled_message(langTitle,212);
                             resolve(msg)
                         }).then((msg) => {
                             msg = msg.replace("Classification_Title_Ar", val_Classification_Title_Ar);
@@ -475,7 +564,7 @@ exports.update_Row =  async(req, res) => {
                     } else if (results[0]==true) {
                         //#region Ar already exist
                         new Promise(async (resolve, reject)=>{
-                            var msg = await fun_handled_messages.get_handled_message(langTitle,109);
+                            var msg = await fun_handled_messages.get_handled_message(langTitle,213);
                             resolve(msg)
                         }).then((msg) => {
                             msg = msg.replace("Classification_Title_Ar", val_Classification_Title_Ar);
@@ -485,7 +574,7 @@ exports.update_Row =  async(req, res) => {
                     } else if (results[1]==true) {
                         //#region En already exist
                         new Promise(async (resolve, reject)=>{
-                            var msg = await fun_handled_messages.get_handled_message(langTitle,110);
+                            var msg = await fun_handled_messages.get_handled_message(langTitle,214);
                             resolve(msg)
                         }).then((msg) => {
                             msg = msg.replace("Classification_Title_En", val_Classification_Title_En);
@@ -514,21 +603,16 @@ exports.update_Row =  async(req, res) => {
                                     }).then((msg) => {
                                         res.status(400).json({ data: [] , message: msg , status: "update failed" });    
                                     })          
-                                    //#endregion
+                                //#endregion
                             } else {
                                 //#region msg update process successed
                                     new Promise(async (resolve, reject)=>{
-                                        var result = await fun_handled_messages.get_handled_message(langTitle,115);
+                                        var result = await fun_handled_messages.get_handled_message(langTitle,219);
                                         resolve(result);
                                     }).then((msg) => {
-                                        if (langTitle=="en") {
-                                            msg = msg.replace("Classification_Title_En", val_Classification_Title_En);
-                                        } else {
-                                            msg = msg.replace("Classification_Title_Ar", val_Classification_Title_Ar);
-                                        }
                                         res.status(200).json({ data: update_flg , message: msg , status: "updated successed" });                            
                                     })
-                                    //#endregion
+                                //#endregion
                             }
                         })
                         //#endregion
@@ -546,183 +630,176 @@ exports.update_Row =  async(req, res) => {
 
 };
 
-
-
-
-
-
-
-
 exports.update_Suspend_Status_One_Row =  async(req, res) => {
 
-    // try {
-    //     //#region Global Variables
-    //     langTitle = req.params.langTitle;
-    //     let val_ID = req.body.id;
-    //     var status = req.params.status;
-    //     var val_Classification_Title_En = req.body.Classification_Title_En;
-    //     var val_Classification_Title_Ar = req.body.Classification_Title_Ar;
-    //     var val_Is_Suspended = false;
-    //     var val_Updated_By = req.body.Updated_By;
-    //     //#endregion
+    try {
+        //#region Global Variables
+        langTitle = req.params.langTitle;
+        let val_ID = req.body.id;
+        var status = req.params.status;
+        var val_Classification_Title_En = req.body.Classification_Title_En;
+        var val_Classification_Title_Ar = req.body.Classification_Title_Ar;
+        var val_Is_Suspended = false;
+        var val_Updated_By = req.body.Updated_By;
+        //#endregion
 
-    //     new Promise(async (resolve, reject)=>{
-    //         let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("vehicles_categories_per_subservices",val_ID);
-    //         resolve(returnedList);
-    //     }).then((returned_ID) => {
-    //         if (!returned_ID) {
-    //             //#region ID is not exist in DB msg 14
-    //             new Promise(async (resolve, reject)=>{
-    //                 var result = await fun_handled_messages.get_handled_message(langTitle,14);
-    //                 resolve(result);
-    //             }).then((msg) => {        
-    //                 res.status(400).json({ data: [] , message: msg, status: "wrong id" });
-    //             })
-    //             //#endregion
-    //         } else {
-    //             //#region ID exist in DB
-    //             if ( (status!="activate") && (status!="suspend") ){
-    //                 //#region wrong url msg 62
-    //                 new Promise(async (resolve, reject)=>{
-    //                     var result = await fun_handled_messages.get_handled_message(langTitle,62);
-    //                     resolve(result);
-    //                 }).then((msg) => {        
-    //                     res.status(400).json({ data: [] , message: msg, status: "wrong url" });
-    //                 })
-    //                 //#endregion
-    //             } else {
-    //                 if (status=="activate") {
-    //                     val_Is_Suspended = false;
-    //                 } else {
-    //                     val_Is_Suspended = true;
-    //                 }
-    //                 //#region update process
-    //                 let recievedData = new tbl_Model({
-    //                     Updated_By: val_Updated_By,
-    //                     Updated_DateTime: now_DateTime.get_DateTime(),
-    //                     Is_Suspended: val_Is_Suspended
-    //                 },{ new: true});
+        new Promise(async (resolve, reject)=>{
+            let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("vehicles_categories_per_subservices",val_ID);
+            resolve(returnedList);
+        }).then((returned_ID) => {
+            if (!returned_ID) {
+                //#region ID is not exist in DB msg 14
+                new Promise(async (resolve, reject)=>{
+                    var result = await fun_handled_messages.get_handled_message(langTitle,14);
+                    resolve(result);
+                }).then((msg) => {        
+                    res.status(400).json({ data: [] , message: msg, status: "wrong id" });
+                })
+                //#endregion
+            } else {
+                //#region ID exist in DB
+                if ( (status!="activate") && (status!="suspend") ){
+                    //#region wrong url msg 62
+                    new Promise(async (resolve, reject)=>{
+                        var result = await fun_handled_messages.get_handled_message(langTitle,62);
+                        resolve(result);
+                    }).then((msg) => {        
+                        res.status(400).json({ data: [] , message: msg, status: "wrong url" });
+                    })
+                    //#endregion
+                } else {
+                    if (status=="activate") {
+                        val_Is_Suspended = false;
+                    } else {
+                        val_Is_Suspended = true;
+                    }
+                    //#region update process
+                    let recievedData = new tbl_Model({
+                        Updated_By: val_Updated_By,
+                        Updated_DateTime: now_DateTime.get_DateTime(),
+                        Is_Suspended: val_Is_Suspended
+                    },{ new: true});
     
-    //                 new Promise(async (resolve, reject)=>{
-    //                     const newList = await fun_update_row.update_row(val_ID, "vehicles_categories_per_subservices", recievedData , false);
-    //                     resolve(newList);
-    //                 }).then((update_flg) => {
-    //                     if (!update_flg) {
-    //                         //#region msg 2 update process failed
-    //                         new Promise(async (resolve, reject)=>{
-    //                         let result = await fun_handled_messages.get_handled_message(langTitle,2);
-    //                         resolve(result);
-    //                         }).then((msg) => {
-    //                             res.status(400).json({ data: [] , message: msg , status: "update failed" });    
-    //                         })          
-    //                         //#endregion
-    //                     } else {
-    //                         //#region msg update process successed
-    //                         new Promise(async (resolve, reject)=>{
-    //                             let result=""
-    //                             if (status=="activate") {
-    //                                 result = await fun_handled_messages.get_handled_message(langTitle,116);
-    //                             } else {
-    //                                 result = await fun_handled_messages.get_handled_message(langTitle,117);
-    //                             }
-    //                             resolve(result);
-    //                         }).then((msg) => {
-    //                             if (langTitle=="en") {
-    //                                 msg = msg.replace("Classification_Title_En", val_Classification_Title_En);
-    //                             } else {
-    //                                 msg = msg.replace("Classification_Title_Ar", val_Classification_Title_Ar);
-    //                             }
-    //                             res.status(200).json({ data: update_flg , message: msg , status: "updated successed" });
-    //                         })
-    //                         //#endregion
-    //                     }
-    //                 })
-    //                 //#endregion
-    //             }
-    //             //#endregion
-    //         }
-    //     })
+                    new Promise(async (resolve, reject)=>{
+                        const newList = await fun_update_row.update_row(val_ID, "vehicles_categories_per_subservices", recievedData , false);
+                        resolve(newList);
+                    }).then((update_flg) => {
+                        if (!update_flg) {
+                            //#region msg 2 update process failed
+                            new Promise(async (resolve, reject)=>{
+                            let result = await fun_handled_messages.get_handled_message(langTitle,2);
+                            resolve(result);
+                            }).then((msg) => {
+                                res.status(400).json({ data: [] , message: msg , status: "update failed" });    
+                            })          
+                            //#endregion
+                        } else {
+                            //#region msg update process successed
+                            new Promise(async (resolve, reject)=>{
+                                let result=""
+                                if (status=="activate") {
+                                    result = await fun_handled_messages.get_handled_message(langTitle,220);
+                                } else {
+                                    result = await fun_handled_messages.get_handled_message(langTitle,221);
+                                }
+                                resolve(result);
+                            }).then((msg) => {
+                                if (langTitle=="en") {
+                                    msg = msg.replace("Classification_Title_En", val_Classification_Title_En);
+                                } else {
+                                    msg = msg.replace("Classification_Title_Ar", val_Classification_Title_Ar);
+                                }
+                                res.status(200).json({ data: update_flg , message: msg , status: "updated successed" });
+                            })
+                            //#endregion
+                        }
+                    })
+                    //#endregion
+                }
+                //#endregion
+            }
+        })
 
-    // } catch (err) {
-    //     logger.error(err.message);
-    //     res.status(500).json({ data:[] , message:err.message , status: "error" });
-    // }
+    } catch (err) {
+        logger.error(err.message);
+        res.status(500).json({ data:[] , message:err.message , status: "error" });
+    }
 
 };
 
 exports.update_Suspend_Status_Many_Rows =  async(req, res) => {
 
-    // try {
-    //     //#region Global Variables
-    //     langTitle = req.params.langTitle;
-    //     var status = req.params.status;
-    //     var val_Is_Suspended = false;
-    //     var val_Updated_By = req.body.Updated_By;
-    //     //#endregion
+    try {
+        //#region Global Variables
+        langTitle = req.params.langTitle;
+        var status = req.params.status;
+        var val_Is_Suspended = false;
+        var val_Updated_By = req.body.Updated_By;
+        //#endregion
 
-    //     new Promise(async (resolve, reject)=>{
-    //         let returnedList = await fun_check_Existancy_By_List_IDS.check_Existancy_By_List_IDS("vehicles_categories_per_subservices",req.body.data);
-    //         resolve(returnedList);
-    //     }).then((returned_ID) => {
-    //         if (!returned_ID) {
-    //             //#region ID is not exist in DB msg 14
-    //             new Promise(async (resolve, reject)=>{
-    //                 var result = await fun_handled_messages.get_handled_message(langTitle,14);
-    //                 resolve(result);
-    //             }).then((msg) => {        
-    //                 res.status(400).json({ data: [] , message: msg, status: "wrong id" });
-    //             })
-    //             //#endregion
-    //         } else {
+        new Promise(async (resolve, reject)=>{
+            let returnedList = await fun_check_Existancy_By_List_IDS.check_Existancy_By_List_IDS("vehicles_categories_per_subservices",req.body.data);
+            resolve(returnedList);
+        }).then((returned_ID) => {
+            if (!returned_ID) {
+                //#region ID is not exist in DB msg 14
+                new Promise(async (resolve, reject)=>{
+                    var result = await fun_handled_messages.get_handled_message(langTitle,14);
+                    resolve(result);
+                }).then((msg) => {        
+                    res.status(400).json({ data: [] , message: msg, status: "wrong id" });
+                })
+                //#endregion
+            } else {
 
-    //             if ( (status!="activate") && (status!="suspend") ){
-    //                 //#region wrong url msg 62
-    //                 new Promise(async (resolve, reject)=>{
-    //                     var result = await fun_handled_messages.get_handled_message(langTitle,62);
-    //                     resolve(result);
-    //                 }).then((msg) => {        
-    //                     res.status(400).json({ data: [] , message: msg, status: "wrong url" });
-    //                 })
-    //                 //#endregion
-    //             } else {
-    //                 //#region update process
-    //                 new Promise(async (resolve, reject)=>{
-    //                     var exist = await fun_Update_Suspend_Status_Many_Rows.Update_Suspend_Status_Many_Rows(status , req.body.data , val_Updated_By , "vehicles_categories_per_subservices");
-    //                     resolve(exist);
-    //                 }).then((Records_Updated) => {
-    //                     if (!Records_Updated) {
-    //                         //#region msg update process failed
-    //                         new Promise(async (resolve, reject)=>{
-    //                             result = await fun_handled_messages.get_handled_message(langTitle,2);
-    //                             resolve(result);
-    //                         }).then((msg) => {
-    //                             res.status(400).json({ data: [] , message: msg , status: "update failed" });    
-    //                         })
-    //                         //#endregion
-    //                     } else {
-    //                         //#region msg update process successed
-    //                         new Promise(async (resolve, reject)=>{                            
-    //                             let result=""
-    //                             if (status=="activate") {
-    //                                 result = await fun_handled_messages.get_handled_message(langTitle,118);
-    //                             } else {
-    //                                 result = await fun_handled_messages.get_handled_message(langTitle,119);
-    //                             }
-    //                             resolve(result);
-    //                         }).then((msg) => {
-    //                             res.status(200).json({ data: Records_Updated , message: msg , status: "updated successed" });
-    //                         })
-    //                         //#endregion
-    //                     }
-    //                 })
-    //                 //#endregion
-    //             }
-    //         }
-    //     })
+                if ( (status!="activate") && (status!="suspend") ){
+                    //#region wrong url msg 62
+                    new Promise(async (resolve, reject)=>{
+                        var result = await fun_handled_messages.get_handled_message(langTitle,62);
+                        resolve(result);
+                    }).then((msg) => {        
+                        res.status(400).json({ data: [] , message: msg, status: "wrong url" });
+                    })
+                    //#endregion
+                } else {
+                    //#region update process
+                    new Promise(async (resolve, reject)=>{
+                        var exist = await fun_Update_Suspend_Status_Many_Rows.Update_Suspend_Status_Many_Rows(status , req.body.data , val_Updated_By , "vehicles_categories_per_subservices");
+                        resolve(exist);
+                    }).then((Records_Updated) => {
+                        if (!Records_Updated) {
+                            //#region msg update process failed
+                            new Promise(async (resolve, reject)=>{
+                                result = await fun_handled_messages.get_handled_message(langTitle,2);
+                                resolve(result);
+                            }).then((msg) => {
+                                res.status(400).json({ data: [] , message: msg , status: "update failed" });    
+                            })
+                            //#endregion
+                        } else {
+                            //#region msg update process successed
+                            new Promise(async (resolve, reject)=>{                            
+                                let result=""
+                                if (status=="activate") {
+                                    result = await fun_handled_messages.get_handled_message(langTitle,222);
+                                } else {
+                                    result = await fun_handled_messages.get_handled_message(langTitle,223);
+                                }
+                                resolve(result);
+                            }).then((msg) => {
+                                res.status(200).json({ data: Records_Updated , message: msg , status: "updated successed" });
+                            })
+                            //#endregion
+                        }
+                    })
+                    //#endregion
+                }
+            }
+        })
 
-    // } catch (err) {
-    //     logger.error(err.message);
-    //     res.status(500).json({ data:[] , message:err.message , status: "error" });
-    // }
+    } catch (err) {
+        logger.error(err.message);
+        res.status(500).json({ data:[] , message:err.message , status: "error" });
+    }
 
 };

@@ -3,6 +3,7 @@ const {
     get_Data_By_SuspendStatus,
     Insert_New_vehicle_classification,
     Insert_Vehicle_Inside_Category,
+    update_Suspend_Status_vehicle_classification,
     update_Row,
     update_Suspend_Status_One_Row,
     update_Suspend_Status_Many_Rows,
@@ -29,15 +30,18 @@ router.route("/:langTitle/insert_data").post(Insert_New_vehicle_classification);
 //#endregion
 router.route("/Insert_Vehicle_Inside_Category/:langTitle/insert_data").post(Insert_Vehicle_Inside_Category);
 
-
-
-
-
 //#region API Links Explanation
 //http://localhost:27017/api/v1/vehicles/vehicle_classifications/en/update_data/651beeec4cde306913c4f4a2
 //http://localhost:27017/api/v1/vehicles/vehicle_classifications/:langTitle/update_data/:id
 //#endregion
 router.route("/:langTitle/update_data/:id").put(update_Row);
+
+//#region API Links Explanation
+//http://localhost:27017/api/v1/vehicles/vehicle_classifications/update_Suspend_Status_vehicle_classification/en/activate
+//http://localhost:27017/api/v1/vehicles/vehicle_classifications/update_Suspend_Status_vehicle_classification/:langTitle/:status
+//#endregion
+router.route("/update_Suspend_Status_vehicle_classification/:langTitle/:status").put(update_Suspend_Status_vehicle_classification);
+
 
 //#region API Links Explanation
 //http://localhost:27017/api/v1/vehicles/vehicle_classifications/en/update_suspend_status_one_row/activate

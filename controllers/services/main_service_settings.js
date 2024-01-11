@@ -166,15 +166,16 @@ exports.update_Row =  async(req, res) => {
                                     new Promise(async (resolve, reject)=>{
                                         var updated = await tbl_Service.Update_SuspendStatus_SubServices_In_Main_Service(val_Is_Suspended,val_ID);
                                         resolve(updated);
+                                    }).then((updated) => {                                        
+                                        if (langTitle=="en") {
+                                            msg = msg.replace("Service_Title_En", val_Service_Title_En);
+                                        } else {
+                                            msg = msg.replace("Service_Title_Ar", val_Service_Title_Ar);
+                                        }
+                                        res.status(200).json({ data: update_flg , message: msg , status: "updated successed" });
                                     })
                                     //#endregion
 
-                                    if (langTitle=="en") {
-                                        msg = msg.replace("Service_Title_En", val_Service_Title_En);
-                                    } else {
-                                        msg = msg.replace("Service_Title_Ar", val_Service_Title_Ar);
-                                    }
-                                    res.status(200).json({ data: update_flg , message: msg , status: "updated successed" });
                                 })
                                 //#endregion
                             }

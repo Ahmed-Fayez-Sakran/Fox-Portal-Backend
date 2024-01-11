@@ -59,8 +59,14 @@ module.exports.check_Existancy_By_ID = async (sent_Table,val_ID) => {
         else if (sent_Table=="vehicles_categories_per_subservices") {
             tbl_Model = require("../models/vehicles_categories_per_subservices");
         }
+        else if (sent_Table=="vehicles_classification") {
+            tbl_Model = require("../models/vehicles_classification");
+        }
+        else if (sent_Table=="vehicle_data_details") {
+            tbl_Model = require("../models/vehicle_data_details");
+        }//Vehicle_Data_Details
         
-
+        
 
 
         //#region Comments

@@ -63,7 +63,13 @@ module.exports.Update_Suspend_Status_Many_Rows = async (status, data , Updated_B
         else if (lkp_Table_Name=="vehicles_classification") {
             tbl_Model = require("../models/vehicles_classification");
         }
-
+        else if (lkp_Table_Name=="vehicles_categories_per_subservices") {
+            tbl_Model = require("../models/vehicles_categories_per_subservices");
+        }
+        else if (lkp_Table_Name=="vehicle_data_details") {
+            tbl_Model = require("../models/vehicle_data_details");
+        }
+        
         
         
         //#region Comments
