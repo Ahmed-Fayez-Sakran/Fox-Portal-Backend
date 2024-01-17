@@ -9,6 +9,8 @@ const Client_Prices_Log_Schema = mongoose.Schema({
     Vehicle_ID: { type: mongoose.Schema.Types.ObjectId, ref: 'Vehicles_Data', required:true, },
 
     Package_ID: { type: mongoose.Schema.Types.ObjectId, required:false, default: '', },
+
+    Package_Price: { type: mongoose.Types.Decimal128, required: false, default: 0.00, },
     
     Daily_Price: { type: mongoose.Types.Decimal128, required: false, default: 0.00, },
     

@@ -86,7 +86,35 @@ module.exports.get_Serial_Number = async (lkp_Table_Name) => {
         else if (lkp_Table_Name=="vehicle_data_details") {
             tbl_Model = require("../models/vehicle_data_details");
         }
+
+        else if (lkp_Table_Name=="client_prices_log") {
+            tbl_Model = require("../models/client_prices_log");
+        }
+        else if (lkp_Table_Name=="business_prices_log") {
+            tbl_Model = require("../models/business_prices_log");
+        }
         
+        else if (lkp_Table_Name=="courier_details") {
+            tbl_Model = require("../models/courier_details");
+        }
+        else if (lkp_Table_Name=="discount_method_lkp") {
+            tbl_Model = require("../models/discount_method_lkp");
+        }
+        else if (lkp_Table_Name=="promo_code_data") {
+            tbl_Model = require("../models/promo_code_data");
+        }
+        else if (lkp_Table_Name=="client_promo_code_log") {
+            tbl_Model = require("../models/client_promo_code_log");
+        }
+        else if (lkp_Table_Name=="business_promo_code_log") {
+            tbl_Model = require("../models/business_promo_code_log");
+        }
+
+        else if (lkp_Table_Name=="drivers_data") {
+            tbl_Model = require("../models/drivers_data");
+        }
+        //
+        //
         
         //#endregion
 

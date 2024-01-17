@@ -153,6 +153,11 @@ const api = process.env.API_URL;
         app.use(`${api}/vehicles/courier_categories_setup/`, courier_categories_setup_Routes);
         //#endregion
         
+        //#region Vehicle / Courier Categories Settings
+        const courier_categories_settings_Routes = require("./routes/vehicles/courier_categories_settings");
+        app.use(`${api}/vehicles/courier_categories_settings/`, courier_categories_settings_Routes);
+        //#endregion
+
         //#region Vehicles / Vehicle Settings
         const vehicle_settings_Routes = require("./routes/vehicles/vehicle_settings");
         app.use(`${api}/vehicles/vehicle_settings/`, vehicle_settings_Routes);
@@ -170,7 +175,24 @@ const api = process.env.API_URL;
 
     //#endregion
 
+    //#region Offers
 
+        //#region Discounts
+        const discounts_Routes = require("./routes/offers/discounts");
+        app.use(`${api}/offers/discounts/`, discounts_Routes);
+        //#endregion
+
+        // //#region Promo Codes
+        const promo_codes_Routes = require("./routes/offers/promo_codes");
+        app.use(`${api}/offers/promo_codes/`, promo_codes_Routes);
+        // //#endregion
+        
+    //#endregion
+
+    //#region Drivers
+    const drivers_Routes = require("./routes/drivers");
+    app.use(`${api}/drivers/`, drivers_Routes);
+    //#endregion
 
 
 //#endregion

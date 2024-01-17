@@ -69,8 +69,22 @@ module.exports.Update_Suspend_Status_Many_Rows = async (status, data , Updated_B
         else if (lkp_Table_Name=="vehicle_data_details") {
             tbl_Model = require("../models/vehicle_data_details");
         }
+        else if (lkp_Table_Name=="client_prices_log") {
+            tbl_Model = require("../models/client_prices_log");
+        }
+        else if (lkp_Table_Name=="business_prices_log") {
+            tbl_Model = require("../models/business_prices_log");
+        }
+        else if (lkp_Table_Name=="courier_details") {
+            tbl_Model = require("../models/courier_details");
+        }
+        else if (lkp_Table_Name=="discount_method_lkp") {
+          tbl_Model = require("../models/discount_method_lkp");
+        }
         
-        
+        else if (lkp_Table_Name=="drivers_data") {
+          tbl_Model = require("../models/drivers_data");
+        }
         
         //#region Comments
           
@@ -89,9 +103,7 @@ module.exports.Update_Suspend_Status_Many_Rows = async (status, data , Updated_B
         //   else if (lkp_Table_Name=="creditcard_type_lkp") {
         //       tbl_Model = require("../models/creditcard_type_lkp");
         //   }
-        //   else if (lkp_Table_Name=="discount_method_lkp") {
-        //       tbl_Model = require("../models/discount_method_lkp");
-        //   }
+        
         //   else if (lkp_Table_Name=="extra_reason_lkp") {
         //       tbl_Model = require("../models/extra_reason_lkp");
         //   }

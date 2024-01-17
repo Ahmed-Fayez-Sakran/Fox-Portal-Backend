@@ -64,10 +64,25 @@ module.exports.check_Existancy_By_ID = async (sent_Table,val_ID) => {
         }
         else if (sent_Table=="vehicle_data_details") {
             tbl_Model = require("../models/vehicle_data_details");
-        }//Vehicle_Data_Details
+        }
+        else if (sent_Table=="courier_details") {
+            tbl_Model = require("../models/courier_details");
+        }
         
+        else if (sent_Table=="discount_type_lkp") {
+            tbl_Model = require("../models/discount_type_lkp");
+        }
+        else if (sent_Table=="discount_method_lkp") {
+            tbl_Model = require("../models/discount_method_lkp");
+        } 
         
-
+        else if (sent_Table=="promo_code_data") {
+            tbl_Model = require("../models/promo_code_data");
+        } 
+        else if (sent_Table=="drivers_data") {
+            tbl_Model = require("../models/drivers_data");
+        } 
+        
 
         //#region Comments
         // else if (sent_Table=="addons_lkp") {
@@ -85,12 +100,7 @@ module.exports.check_Existancy_By_ID = async (sent_Table,val_ID) => {
         // else if (sent_Table=="creditcard_type_lkp") {
         //     tbl_Model = require("../models/creditcard_type_lkp");
         // }
-        // else if (sent_Table=="discount_type_lkp") {
-        //     tbl_Model = require("../models/discount_type_lkp");
-        // }
-        // else if (sent_Table=="discount_method_lkp") {
-        //     tbl_Model = require("../models/discount_method_lkp");
-        // }
+        
         // else if (sent_Table=="extra_reason_lkp") {
         //     tbl_Model = require("../models/extra_reason_lkp");
         // }

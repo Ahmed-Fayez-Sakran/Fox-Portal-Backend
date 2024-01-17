@@ -4,6 +4,7 @@ var Client_Prices_Log_Model = require("../models/client_prices_log");
 var Business_Prices_Log_Model = require("../models/business_prices_log.js");
 const now_DateTime = require('../helpers/fun_datetime');
 const logger = require('../utils/logger');
+const ObjectId = require('mongodb').ObjectId;
 //#endregion
 
 exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
@@ -1038,3 +1039,57 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
     logger.error(err.message);
   }     
 };
+
+exports.check_Price_Existancy = async (val_Table_Name , val_Sub_Service_ID , val_User_ID , val_Vehicle_ID , val_Package_ID , val_Package_Price) => {
+  try {
+    const return_Data = [];
+    let itemsCount = ""
+
+    if (val_Table_Name=="client_prices_log") 
+    {
+      //#region Client_Prices_Log
+        tbl_Model = require("../models/client_prices_log");
+        itemsCount = await tbl_Model.find({
+          $and:
+          [
+            { Sub_Service_ID: new ObjectId(val_Sub_Service_ID) },
+            { Vehicle_ID: new ObjectId(val_Vehicle_ID) },
+            { Is_Suspended: false}
+          ]
+        });
+      //#endregion
+    }
+    else if (val_Table_Name=="business_prices_log") 
+    {
+      //#region Business_Prices_Log
+        tbl_Model = require("../models/business_prices_log");
+        itemsCount = await tbl_Model.find({
+          $and:
+          [
+            { Sub_Service_ID: new ObjectId(val_Sub_Service_ID) },
+            { User_ID: new ObjectId(val_User_ID) },
+            { Vehicle_ID: new ObjectId(val_Vehicle_ID) },
+            { Is_Suspended: false}
+          ]
+      });
+      //#endregion
+    }
+
+    if (itemsCount.length<=0) {
+      return_Data[0]= "";
+      return_Data[1]= false;
+    } else {
+      return_Data[0]= itemsCount[0]._id;
+      return_Data[1]= true;
+    }
+    console.log("return_Data = "+return_Data)
+    return return_Data;
+
+  }catch (err) {
+    logger.error(err.message);
+  }  
+};
+
+
+
+

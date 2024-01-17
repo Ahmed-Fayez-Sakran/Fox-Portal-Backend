@@ -65,7 +65,19 @@ module.exports.check_Existancy_By_List_IDS = async (sent_Table,val_Array_IDs) =>
         else if (sent_Table=="vehicle_data_details") {
             tbl_Model = require("../models/vehicle_data_details");
         }
-
+        else if (sent_Table=="vehicles_data") {
+            tbl_Model = require("../models/vehicles_data");
+        }
+        else if (sent_Table=="courier_details") {
+            tbl_Model = require("../models/courier_details");
+        }
+        else if (sent_Table=="discount_method_lkp") {
+            tbl_Model = require("../models/discount_method_lkp");
+        }
+        
+        else if (sent_Table=="drivers_data") {
+            tbl_Model = require("../models/drivers_data");
+        }
         
         
         //#region comments
@@ -87,9 +99,7 @@ module.exports.check_Existancy_By_List_IDS = async (sent_Table,val_Array_IDs) =>
         // else if (sent_Table=="discount_type_lkp") {
         //     tbl_Model = require("../models/discount_type_lkp");
         // }
-        // else if (sent_Table=="discount_method_lkp") {
-        //     tbl_Model = require("../models/discount_method_lkp");
-        // }
+        
         // else if (sent_Table=="extra_reason_lkp") {
         //     tbl_Model = require("../models/extra_reason_lkp");
         // }

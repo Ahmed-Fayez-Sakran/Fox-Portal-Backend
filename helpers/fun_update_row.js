@@ -78,6 +78,15 @@ module.exports.update_row = async (id , lkp_Table_Name , tblObject , is_Delete_O
         else if (lkp_Table_Name=="vehicle_data_details") {
             tbl_Model = require("../models/vehicle_data_details");
         } 
+        else if (lkp_Table_Name=="courier_details") {
+            tbl_Model = require("../models/courier_details");
+        } 
+        else if (lkp_Table_Name=="discount_method_lkp") {
+            tbl_Model = require("../models/discount_method_lkp");
+        } 
+        else if (lkp_Table_Name=="drivers_data") {
+            tbl_Model = require("../models/drivers_data");
+        } 
                
         
         else {

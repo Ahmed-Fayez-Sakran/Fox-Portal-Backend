@@ -20,6 +20,11 @@ module.exports.get_Photo_Path = async (id,sent_Table) => {
             item = await tbl_Model.findById(id).sort({ _id: -1 }).limit(1);
             returned_Photo =  item.photo_Path;
         }
+        else if (sent_Table=="drivers_data") {
+            tbl_Model = require("../models/drivers_data");
+            item = await tbl_Model.findById(id).sort({ _id: -1 }).limit(1);
+            returned_Photo =  item.Photo_Profile;
+        }
         // else if (sent_Table=="addons_lkp") {
         //     tbl_Model = require("../models/addons_lkp");
         //     item = await tbl_Model.findById(id).sort({ _id: -1 }).limit(1);
