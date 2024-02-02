@@ -67,7 +67,7 @@ exports.get_Data_By_SuspendStatus =  async(req, res) => {
 
 exports.Insert_New_Vehicles_Advance_Notice_Period_Log =  async(req, res) => {
 
-    try {
+    try { 
         //#region Global Variables
         langTitle = req.params.langTitle;
         var val_Sub_Service_ID = req.body.Sub_Service_ID;
@@ -76,7 +76,7 @@ exports.Insert_New_Vehicles_Advance_Notice_Period_Log =  async(req, res) => {
         var val_Model_ID = req.body.Model_ID;
         var val_Notice_Period_Per_Hours = req.body.Notice_Period_Per_Hours;
         var val_Inserted_By = req.body.Inserted_By;
-        const Vehicles_sentData = [];
+        var Vehicles_sentData = [];
         var insert_object = "";
         //#endregion
 
@@ -99,12 +99,12 @@ exports.Insert_New_Vehicles_Advance_Notice_Period_Log =  async(req, res) => {
                         var result = await fun_handled_messages.get_handled_message(langTitle,14);
                         resolve(result);
                     }).then((msg) => {        
-                        res.status(400).json({ data: [] , message: msg, status: "id not exist" });
+                        res.status(404).json({ data: [] , message: msg, status: "id not exist" });
                     })
                     //#endregion
                 } else {
                     //#region insert process
-
+                    
                     new Promise(async (resolve, reject)=>{
                         var exist = await tbl_Service.Get_Vehicles_By_Model_ID(val_Model_ID);
                         resolve(exist);
@@ -125,7 +125,7 @@ exports.Insert_New_Vehicles_Advance_Notice_Period_Log =  async(req, res) => {
                             Vehicles_sentData.push(insert_object);
                         }
                         //#endregion
-
+                        console.log("Vehicles_sentData = "+Vehicles_sentData)
                         if (Vehicles_sentData.length>0) {
 
                             new Promise(async (resolve, reject)=>{
@@ -191,7 +191,7 @@ exports.Insert_New_Vehicles_Advance_Notice_Period_Log =  async(req, res) => {
                         var result = await fun_handled_messages.get_handled_message(langTitle,14);
                         resolve(result);
                     }).then((msg) => {        
-                        res.status(400).json({ data: [] , message: msg, status: "id not exist" });
+                        res.status(404).json({ data: [] , message: msg, status: "id not exist" });
                     })
                     //#endregion
                 } else {
@@ -243,7 +243,7 @@ exports.Insert_New_Vehicles_Advance_Notice_Period_Log =  async(req, res) => {
                                     } else {
                                         //#region insert process succeeded
                                         new Promise(async (resolve, reject)=>{
-                                            var result = await fun_handled_messages.get_handled_message(langTitle,207);
+                                            var result = await fun_handled_messages.get_handled_message(langTitle,208);
                                             resolve(result);
                                         }).then((msg) => {
                                             res.status(200).json({ data: insert_Flg , message: msg , status: "insert successed" });                            

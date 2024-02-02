@@ -1034,7 +1034,6 @@ exports.check_vehicle_Detail_Existancy = async (val_Vehicle_Id,val_Plate_Number)
 
 };
 
-
 exports.Update_SuspendStatus_Vehicle_Data_Details = async (val_Is_Suspended,val_Vehicle_Id) => {
 
   try 

@@ -1,7 +1,7 @@
 const express = require("express");
 const {
     get_Data_By_SuspendStatus,
-    Insert_New_Package,
+    Insert_New_Fuel_Type,
     update_Row,
     update_Suspend_Status_One_Row,
     update_Suspend_Status_Many_Rows,
@@ -20,7 +20,7 @@ router.route("/:langTitle/get_data/:page_number/:suspendStatus").get(get_Data_By
 //http://localhost:27017/api/v1/vehicles/fuel_type_setup/en/insert_data
 //http://localhost:27017/api/v1/vehicles/fuel_type_setup/:langTitle/insert_data
 //#endregion
-router.route("/:langTitle/insert_data").post(Insert_New_Package);
+router.route("/:langTitle/insert_data").post(Insert_New_Fuel_Type);
 
 //#region API Links Explanation
 //http://localhost:27017/api/v1/vehicles/fuel_type_setup/en/update_data/651beeec4cde306913c4f4a2

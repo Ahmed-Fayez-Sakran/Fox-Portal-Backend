@@ -64,7 +64,7 @@ exports.get_Data_By_SuspendStatus =  async(req, res) => {
     }
 };
 
-exports.Insert_New_Package =  async(req, res) => {
+exports.Insert_New_Transmission_Type =  async(req, res) => {
 
     try {
         //#region Global Variables
@@ -203,7 +203,7 @@ exports.update_Row =  async(req, res) => {
                     var result = await fun_handled_messages.get_handled_message(langTitle,14);
                     resolve(result);
                 }).then((msg) => {        
-                    res.status(400).json({ data: [] , message: msg, status: "id not exist" });
+                    res.status(404).json({ data: [] , message: msg, status: "id not exist" });
                 })
                 //#endregion
             } else {
@@ -342,7 +342,7 @@ exports.update_Suspend_Status_One_Row =  async(req, res) => {
                         var result = await fun_handled_messages.get_handled_message(langTitle,62);
                         resolve(result);
                     }).then((msg) => {        
-                        res.status(400).json({ data: [] , message: msg, status: "wrong url" });
+                        res.status(404).json({ data: [] , message: msg, status: "wrong url" });
                     })
                     //#endregion
                 } else {
@@ -435,7 +435,7 @@ exports.update_Suspend_Status_Many_Rows =  async(req, res) => {
                         var result = await fun_handled_messages.get_handled_message(langTitle,62);
                         resolve(result);
                     }).then((msg) => {        
-                        res.status(400).json({ data: [] , message: msg, status: "wrong url" });
+                        res.status(404).json({ data: [] , message: msg, status: "wrong url" });
                     })
                     //#endregion
                 } else {

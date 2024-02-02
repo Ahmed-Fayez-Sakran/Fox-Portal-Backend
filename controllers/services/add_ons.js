@@ -48,7 +48,7 @@ exports.get_Data_By_SuspendStatus =  async(req, res) => {
                 if ((suspendStatus.trim() ==="only-true")||(suspendStatus.trim() ==="only-false")||(suspendStatus.trim() ==="all")) {
                   res.status(200).json({ data: [] , message: results[1] , status: "empty rows" });
                 } else {
-                    res.status(400).json({ data: [] , message: results[1] , status: "wrong url" });
+                    res.status(404).json({ data: [] , message: results[1] , status: "wrong url" });
                 }
             } else {
                 res.status(200).json({ data: results[0] , message: "" , status: "rows selected" });
@@ -411,7 +411,7 @@ exports.update_Suspend_Status_One_Row =  async(req, res) => {
                         var result = await fun_handled_messages.get_handled_message(langTitle,62);
                         resolve(result);
                     }).then((msg) => {        
-                        res.status(400).json({ data: [] , message: msg, status: "wrong url" });
+                        res.status(404).json({ data: [] , message: msg, status: "wrong url" });
                     })
                     //#endregion
                 } else {
@@ -504,7 +504,7 @@ exports.update_Suspend_Status_Many_Rows =  async(req, res) => {
                         var result = await fun_handled_messages.get_handled_message(langTitle,62);
                         resolve(result);
                     }).then((msg) => {        
-                        res.status(400).json({ data: [] , message: msg, status: "wrong url" });
+                        res.status(404).json({ data: [] , message: msg, status: "wrong url" });
                     })
                     //#endregion
                 } else {

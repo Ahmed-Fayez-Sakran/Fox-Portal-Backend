@@ -78,7 +78,41 @@ module.exports.check_Existancy_By_List_IDS = async (sent_Table,val_Array_IDs) =>
         else if (sent_Table=="drivers_data") {
             tbl_Model = require("../models/drivers_data");
         }
-        
+        else if (sent_Table=="promo_code_data") {
+            tbl_Model = require("../models/promo_code_data");
+        }
+
+
+        else if (sent_Table=="airline_lkp") {
+            tbl_Model = require("../models/airline_lkp");
+        } else if (sent_Table=="cancel_reason_lkp") {
+            tbl_Model = require("../models/cancel_reason_lkp");
+        } else if (sent_Table=="courier_categories_lkp") {
+            tbl_Model = require("../models/courier_categories_lkp");
+        } else if (sent_Table=="creditcard_type_lkp") {
+            tbl_Model = require("../models/creditcard_type_lkp");
+        } else if (sent_Table=="extra_reason_lkp") {
+            tbl_Model = require("../models/extra_reason_lkp");
+        } else if (sent_Table=="payment_method_lkp") {
+            tbl_Model = require("../models/payment_method_lkp");
+        } else if (sent_Table=="refund_reason_lkp") {
+            tbl_Model = require("../models/refund_reason_lkp");
+        } else if (sent_Table=="report_reason_lkp") {
+            tbl_Model = require("../models/report_reason_lkp");
+        } else if (sent_Table=="discount_type_lkp") {
+            tbl_Model = require("../models/discount_type_lkp");
+        } else if (sent_Table=="vehicle_change_reasons_lkp") {
+            tbl_Model = require("../models/vehicle_change_reasons_lkp");
+        } else if (sent_Table=="order_status_lkp") {
+            tbl_Model = require("../models/order_status_lkp");
+        } else if (sent_Table=="user_roles_lkp") {
+            tbl_Model = require("../models/user_roles_lkp");
+        }
+
+
+
+
+
         
         //#region comments
         // else if (sent_Table=="airline_lkp") {
@@ -150,9 +184,7 @@ module.exports.check_Existancy_By_List_IDS = async (sent_Table,val_Array_IDs) =>
         //     tbl_Model = require("../models/users_orders_main_log");
         // } else if (sent_Table=="discount_method_lkp") {
         //     tbl_Model = require("../models/discount_method_lkp");
-        // } else if (sent_Table=="promo_code_data") {
-        //     tbl_Model = require("../models/promo_code_data");
-        // }
+        // } 
         //#endregion   
         else {
             tbl_Model = ""

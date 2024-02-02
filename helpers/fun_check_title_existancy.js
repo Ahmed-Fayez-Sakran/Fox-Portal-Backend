@@ -142,7 +142,6 @@ module.exports.check_title_existancy = async (lkp_Table_Name , val_Id , val_Oper
                     }).count();
                 }
             }
-
             else if(lkp_Table_Name=="style_lkp")
             {
                 tbl_Model = require("../models/style_lkp");
@@ -299,7 +298,6 @@ module.exports.check_title_existancy = async (lkp_Table_Name , val_Id , val_Oper
                     }).count();
                 }
             }
-            
             else if(lkp_Table_Name=="vehicles_categories_per_subservices")
             {
                 tbl_Model = require("../models/vehicles_categories_per_subservices");
@@ -324,7 +322,294 @@ module.exports.check_title_existancy = async (lkp_Table_Name , val_Id , val_Oper
                     }).count();
                 }
             }
-            
+            else if (lkp_Table_Name=="airline_lkp") 
+            {
+                tbl_Model = require("../models/airline_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Airline_Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Airline_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="cancel_reason_lkp") 
+            {
+                tbl_Model = require("../models/cancel_reason_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Cancel_Reason_Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Cancel_Reason_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="courier_categories_lkp") 
+            {
+                tbl_Model = require("../models/courier_categories_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Category_Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Category_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="creditcard_type_lkp") 
+            {
+                tbl_Model = require("../models/creditcard_type_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Type_Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Type_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="extra_reason_lkp") 
+            {
+                tbl_Model = require("../models/extra_reason_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Extra_Reason_Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Extra_Reason_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="payment_method_lkp")
+            {
+                tbl_Model = require("../models/payment_method_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Payment_Method_Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Payment_Method_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="refund_reason_lkp")
+            {
+                tbl_Model = require("../models/refund_reason_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Refund_Reason_Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Refund_Reason_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="report_reason_lkp") 
+            {
+                tbl_Model = require("../models/report_reason_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Report_Reason_Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Report_Reason_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="discount_type_lkp") 
+            {
+                tbl_Model = require("../models/discount_type_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="vehicle_change_reasons_lkp") 
+            {
+                tbl_Model = require("../models/vehicle_change_reasons_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Change_Reason_Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Change_Reason_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="order_status_lkp") 
+            {
+                tbl_Model = require("../models/order_status_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Order_Status_Title_Ar: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Order_Status_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="user_roles_lkp") 
+            {
+                tbl_Model = require("../models/user_roles_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Role_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Role_Title_En: val_Title },
+                            { Is_Suspended: false }
+                        ]                    
+                    }).count();
+                }
+            }
 
             else 
             {
@@ -568,7 +853,6 @@ module.exports.check_title_existancy = async (lkp_Table_Name , val_Id , val_Oper
                     }).count();
                 }
             }
-
             else if (lkp_Table_Name=="style_lkp")
             {
                 tbl_Model = require("../models/style_lkp");
@@ -753,7 +1037,6 @@ module.exports.check_title_existancy = async (lkp_Table_Name , val_Id , val_Oper
                     }).count();
                 }
             }
-
             else if(lkp_Table_Name=="vehicles_categories_per_subservices")
             {
                 tbl_Model = require("../models/vehicles_categories_per_subservices");
@@ -780,13 +1063,325 @@ module.exports.check_title_existancy = async (lkp_Table_Name , val_Id , val_Oper
                     }).count();
                 }
             }
-            
+            else if (lkp_Table_Name=="airline_lkp") 
+            {
+                tbl_Model = require("../models/airline_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Airline_Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Airline_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="cancel_reason_lkp") 
+            {
+                tbl_Model = require("../models/cancel_reason_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Cancel_Reason_Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Cancel_Reason_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="courier_categories_lkp") 
+            {
+                tbl_Model = require("../models/courier_categories_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Category_Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Category_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="creditcard_type_lkp") 
+            {
+                tbl_Model = require("../models/creditcard_type_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Type_Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Type_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="extra_reason_lkp") 
+            {
+                tbl_Model = require("../models/extra_reason_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Extra_Reason_Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Extra_Reason_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="payment_method_lkp") 
+            {
+                tbl_Model = require("../models/payment_method_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Payment_Method_Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Payment_Method_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="refund_reason_lkp") 
+            {
+                tbl_Model = require("../models/refund_reason_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Refund_Reason_Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Refund_Reason_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="report_reason_lkp") 
+            {
+                tbl_Model = require("../models/report_reason_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Report_Reason_Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Report_Reason_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="discount_type_lkp") 
+            {
+                tbl_Model = require("../models/discount_type_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="vehicle_change_reasons_lkp") 
+            {
+                tbl_Model = require("../models/vehicle_change_reasons_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Change_Reason_Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Change_Reason_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="order_status_lkp") 
+            {
+                tbl_Model = require("../models/order_status_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Order_Status_Title_Ar: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Order_Status_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            } 
+            else if (lkp_Table_Name=="user_roles_lkp") 
+            {
+                tbl_Model = require("../models/user_roles_lkp");
+                if (val_Lang=="ar") 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Role_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+                else 
+                {
+                    itemsCount = await tbl_Model.find({
+                        $and: 
+                        [
+                            { Role_Title_En: val_Title },
+                            { Is_Suspended: false },
+                            {'_id': {$ne : new ObjectId(val_Id)}}
+                        ]                    
+                    }).count();
+                }
+            }
+
             else 
             {
                 return"";
             }
             //#endregion
-        }        
+        }
         //#endregion
 
         console.log("itemsCount = "+itemsCount)

@@ -22,169 +22,178 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
     //#endregion
 
     //#region suspendStatus Cases
-    if (suspendStatus.trim()==="only-true") 
+    if (suspendStatus.trim()==="only-true")
     {
       if (pageNumber=="0")
       {
         val_Returned_Object = await Client_Vehicles_Advance_Notice_Period_Log_Model.aggregate
         ([
-
+  
           {
-              $addFields: 
-              {
-                collectionName: "Client_Vehicles_Advance_Notice_Period_Log"
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "User":"N/A",
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "Type":"General",
-              }
-          },
-        
-          {
-                $match:
-                {
-                    "Is_Suspended": true
-                }
-            },
-        
+            $addFields:
             {
-              $unionWith:
-              {
-                coll: 'Business_Vehicles_Advance_Notice_Period_Log',
-                pipeline:
-                [
-                  {
-                    $addFields: 
-                    {
-                      collectionName: "Business_Vehicles_Advance_Notice_Period_Log"
-                    }
-                },
-        
-                {
-                    $addFields: 
-                    {
-                      "Type":"Business",
-                    }
-                },
-        
-                {
-                      $match:
-                      {
-                          "Is_Suspended": true
-                      }
-                  },
-                      
-                {
-                      $lookup:
-                      {
-                          from: 'User_Data',
-                          localField: 'User_ID',
-                          foreignField: '_id',
-                          as: 'User_Data_Details'
-                      }
-                  },			    
-                  {
-                      $match:
-                      {
-                          "User_Data_Details.Is_Business": true
-                      }
-                  },
-                  {$unwind: '$User_Data_Details'},
-        
-                {
-                      $lookup:
-                      {
-                          from: 'Business_Organizations_LKP',
-                          localField: 'User_Data_Details.Business_Organization_ID',
-                          foreignField: '_id',
-                          as: 'Organization_Details'
-                    }
-                  },			    
-                  {$unwind: '$Organization_Details'},
-                {
-                    $addFields: 
-                    {
-                      "User":'$Organization_Details.Organization_Title_En',
-                    }
-                },				
-                ]
-              }
-            },
+              collectionName: "Client_Vehicles_Advance_Notice_Period_Log",
+              "User":"N/A",
+              "Type":"General",
+            }
+          },
         
           {
-                $lookup: 
+            $match:
+            {
+              Is_Suspended: true
+            }
+          },
+        
+          {
+            $unionWith:
+            {
+              coll: 'Business_Vehicles_Advance_Notice_Period_Log',
+              pipeline:
+              [
+        
                 {
-                    from: 'Vehicles_Data',
-                    localField: 'Vehicle_ID',
+                  $match:
+                  {
+                    Is_Suspended: true
+                  }
+                },
+        
+                {
+                  $lookup:
+                  {
+                    from: 'User_Data',
+                    localField: 'User_ID',
                     foreignField: '_id',
-                    as: 'Vehicles_Data_Details'
-                }
-            },
-            { $unwind: '$Vehicles_Data_Details' },
+                    as: 'User_Data_Details'
+                  }
+                },
         
+                {
+                  $match:
+                  {
+                    "User_Data_Details.Is_Business": true
+                  }
+                },
+        
+                {$unwind: '$User_Data_Details'},
+        
+                {
+                  $lookup:
+                  {
+                    from: 'Business_Organizations_LKP',
+                    localField: 'User_Data_Details.Business_Organization_ID',
+                    foreignField: '_id',
+                    as: 'Organization_Details'
+                  }
+                },
+        
+                {$unwind: '$Organization_Details'},
+        
+                {
+                  $addFields:
+                  {
+                    collectionName: "Business_Vehicles_Advance_Notice_Period_Log",
+                    "User":'$Organization_Details.Organization_Title_En',
+                    "Type":"Business",
+                  }
+                },
+        
+              ]
+            }
+          },
+        
+          {
+            $lookup:
             {
+              from: 'Vehicles_Data',
+              localField: 'Vehicle_ID',
+              foreignField: '_id',
+              as: 'Vehicles_Data_Details'
+            }
+          },
+        
+          { $unwind: '$Vehicles_Data_Details' },
+        
+          {
             $lookup:
             {
               from: 'Sub_Services_LKP',
-                    localField: 'Sub_Service_ID',
-                    foreignField: '_id',
-                    as: 'Sub_Services_Details'
+              localField: 'Sub_Service_ID',
+              foreignField: '_id',
+              as: 'Sub_Services_Details'
             }
           },
+        
           {$unwind: '$Sub_Services_Details'},
         
+          {
+            $lookup:
             {
-                $lookup:
-                {
-                    from: 'Model_LKP',
-                    localField: 'Vehicles_Data_Details.Model_ID',
-                    foreignField: '_id',
-                    as: 'Model_LKP_Details'
-                }
-            },
-            { $unwind: '$Model_LKP_Details' },
+              from: 'Model_LKP',
+              localField: 'Vehicles_Data_Details.Model_ID',
+              foreignField: '_id',
+              as: 'Model_LKP_Details'
+            }
+          },
         
-            {
-                $lookup:
-                {
-                    from: 'Brand_Name_LKP',
-                    localField: 'Model_LKP_Details.Brand_ID',
-                    foreignField: '_id',
-                    as: 'Brand_Name_LKP_Details'
-                }
-            },
-            { $unwind: '$Brand_Name_LKP_Details' },
+          { $unwind: '$Model_LKP_Details' },
         
           {
-                $project:
-                {
-                    _id:0,
+            $lookup:
+            {
+              from: 'Brand_Name_LKP',
+              localField: 'Model_LKP_Details.Brand_ID',
+              foreignField: '_id',
+              as: 'Brand_Name_LKP_Details'
+            }
+          },
         
-                    Serial_Number:1,
-                    Notice_Period_Per_Hours:1,
-                    Vehicle_ID: "$Vehicles_Data_Details._id",
+          { $unwind: '$Brand_Name_LKP_Details' },
         
-                    Model_ID: "$Model_LKP_Details._id",
-                    Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
-                    Model_Name_En: "$Model_LKP_Details.Model_Name_En",
-                    Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+          {
+            $group: 
+            {
+              _id: {
+                Notice_Period_Per_Hours: "$Notice_Period_Per_Hours",
+                Model_ID: "$Model_ID",
+                Sub_Service_Title_En: "$Sub_Service_Title_En",
+                Sub_Service_Title_Ar: "$Sub_Service_Title_Ar",
+                Sub_Service_id: "$Sub_Service_id",
+              },
+              firstDocument: { $first: "$$ROOT" }
+              
+            }
+          },
+          
+          {
+            $replaceRoot: { newRoot: "$firstDocument" }
+          },
         
-                    Brand_ID: "$Brand_Name_LKP_Details._id",
-                    Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
-                    Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
-                    Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
+          {
+            $project:
+            {
+              _id:0,
+                
+              Serial_Number:1,
+              Notice_Period_Per_Hours:1,
+              Vehicle_ID: "$Vehicles_Data_Details._id",
+                      
+              Model_ID: "$Model_LKP_Details._id",
+              Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
+              Model_Name_En: "$Model_LKP_Details.Model_Name_En",
+              Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+                      
+              Brand_ID: "$Brand_Name_LKP_Details._id",
+              Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
+              Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
+              Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
         
-                    Inserted_By: 1,
+              Sub_Service_id: "$Sub_Services_Details._id",
+              Sub_Service_Title_En: "$Sub_Services_Details.Sub_Service_Title_En",
+              Sub_Service_Title_Ar: "$Sub_Services_Details.Sub_Service_Title_Ar",
+                      
+              Inserted_By: 1,
               Inserted_DateTime: 1,
               Is_Suspended: 1,
               Updated_By: 1,
@@ -192,9 +201,10 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
               collectionName:1,
               User:1,
               Type:1,
+            }
+          },
         
-                }
-            },
+          
         
         ]);
       }
@@ -202,163 +212,172 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
       {
         val_Returned_Object = await Client_Vehicles_Advance_Notice_Period_Log_Model.aggregate
         ([
-
+  
           {
-              $addFields: 
-              {
-                collectionName: "Client_Vehicles_Advance_Notice_Period_Log"
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "User":"N/A",
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "Type":"General",
-              }
-          },
-        
-          {
-                $match:
-                {
-                    "Is_Suspended": true
-                }
-            },
-        
+            $addFields:
             {
-              $unionWith:
-              {
-                coll: 'Business_Vehicles_Advance_Notice_Period_Log',
-                pipeline:
-                [
-                  {
-                    $addFields: 
-                    {
-                      collectionName: "Business_Vehicles_Advance_Notice_Period_Log"
-                    }
-                },
-        
-                {
-                    $addFields: 
-                    {
-                      "Type":"Business",
-                    }
-                },
-        
-                {
-                      $match:
-                      {
-                          "Is_Suspended": true
-                      }
-                  },
-                      
-                {
-                      $lookup:
-                      {
-                          from: 'User_Data',
-                          localField: 'User_ID',
-                          foreignField: '_id',
-                          as: 'User_Data_Details'
-                      }
-                  },			    
-                  {
-                      $match:
-                      {
-                          "User_Data_Details.Is_Business": true
-                      }
-                  },
-                  {$unwind: '$User_Data_Details'},
-        
-                {
-                      $lookup:
-                      {
-                          from: 'Business_Organizations_LKP',
-                          localField: 'User_Data_Details.Business_Organization_ID',
-                          foreignField: '_id',
-                          as: 'Organization_Details'
-                    }
-                  },			    
-                  {$unwind: '$Organization_Details'},
-                {
-                    $addFields: 
-                    {
-                      "User":'$Organization_Details.Organization_Title_En',
-                    }
-                },				
-                ]
-              }
-            },
+              collectionName: "Client_Vehicles_Advance_Notice_Period_Log",
+              "User":"N/A",
+              "Type":"General",
+            }
+          },
         
           {
-                $lookup: 
+            $match:
+            {
+              Is_Suspended: true
+            }
+          },
+        
+          {
+            $unionWith:
+            {
+              coll: 'Business_Vehicles_Advance_Notice_Period_Log',
+              pipeline:
+              [
+        
                 {
-                    from: 'Vehicles_Data',
-                    localField: 'Vehicle_ID',
+                  $match:
+                  {
+                    Is_Suspended: true
+                  }
+                },
+        
+                {
+                  $lookup:
+                  {
+                    from: 'User_Data',
+                    localField: 'User_ID',
                     foreignField: '_id',
-                    as: 'Vehicles_Data_Details'
-                }
-            },
-            { $unwind: '$Vehicles_Data_Details' },
+                    as: 'User_Data_Details'
+                  }
+                },
         
+                {
+                  $match:
+                  {
+                    "User_Data_Details.Is_Business": true
+                  }
+                },
+        
+                {$unwind: '$User_Data_Details'},
+        
+                {
+                  $lookup:
+                  {
+                    from: 'Business_Organizations_LKP',
+                    localField: 'User_Data_Details.Business_Organization_ID',
+                    foreignField: '_id',
+                    as: 'Organization_Details'
+                  }
+                },
+        
+                {$unwind: '$Organization_Details'},
+        
+                {
+                  $addFields:
+                  {
+                    collectionName: "Business_Vehicles_Advance_Notice_Period_Log",
+                    "User":'$Organization_Details.Organization_Title_En',
+                    "Type":"Business",
+                  }
+                },
+        
+              ]
+            }
+          },
+        
+          {
+            $lookup:
             {
+              from: 'Vehicles_Data',
+              localField: 'Vehicle_ID',
+              foreignField: '_id',
+              as: 'Vehicles_Data_Details'
+            }
+          },
+        
+          { $unwind: '$Vehicles_Data_Details' },
+        
+          {
             $lookup:
             {
               from: 'Sub_Services_LKP',
-                    localField: 'Sub_Service_ID',
-                    foreignField: '_id',
-                    as: 'Sub_Services_Details'
+              localField: 'Sub_Service_ID',
+              foreignField: '_id',
+              as: 'Sub_Services_Details'
             }
           },
+        
           {$unwind: '$Sub_Services_Details'},
         
+          {
+            $lookup:
             {
-                $lookup:
-                {
-                    from: 'Model_LKP',
-                    localField: 'Vehicles_Data_Details.Model_ID',
-                    foreignField: '_id',
-                    as: 'Model_LKP_Details'
-                }
-            },
-            { $unwind: '$Model_LKP_Details' },
+              from: 'Model_LKP',
+              localField: 'Vehicles_Data_Details.Model_ID',
+              foreignField: '_id',
+              as: 'Model_LKP_Details'
+            }
+          },
         
-            {
-                $lookup:
-                {
-                    from: 'Brand_Name_LKP',
-                    localField: 'Model_LKP_Details.Brand_ID',
-                    foreignField: '_id',
-                    as: 'Brand_Name_LKP_Details'
-                }
-            },
-            { $unwind: '$Brand_Name_LKP_Details' },
+          { $unwind: '$Model_LKP_Details' },
         
           {
-                $project:
-                {
-                    _id:0,
+            $lookup:
+            {
+              from: 'Brand_Name_LKP',
+              localField: 'Model_LKP_Details.Brand_ID',
+              foreignField: '_id',
+              as: 'Brand_Name_LKP_Details'
+            }
+          },
         
-                    Serial_Number:1,
-                    Notice_Period_Per_Hours:1,
-                    Vehicle_ID: "$Vehicles_Data_Details._id",
+          { $unwind: '$Brand_Name_LKP_Details' },
         
-                    Model_ID: "$Model_LKP_Details._id",
-                    Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
-                    Model_Name_En: "$Model_LKP_Details.Model_Name_En",
-                    Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+          {
+            $group: 
+            {
+              _id: {
+                Notice_Period_Per_Hours: "$Notice_Period_Per_Hours",
+                Model_ID: "$Model_ID",
+                Sub_Service_Title_En: "$Sub_Service_Title_En",
+                Sub_Service_Title_Ar: "$Sub_Service_Title_Ar",
+                Sub_Service_id: "$Sub_Service_id",
+              },
+              firstDocument: { $first: "$$ROOT" }
+              
+            }
+          },
+          
+          {
+            $replaceRoot: { newRoot: "$firstDocument" }
+          },
         
-                    Brand_ID: "$Brand_Name_LKP_Details._id",
-                    Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
-                    Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
-                    Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
+          {
+            $project:
+            {
+              _id:0,
+                
+              Serial_Number:1,
+              Notice_Period_Per_Hours:1,
+              Vehicle_ID: "$Vehicles_Data_Details._id",
+                      
+              Model_ID: "$Model_LKP_Details._id",
+              Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
+              Model_Name_En: "$Model_LKP_Details.Model_Name_En",
+              Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+                      
+              Brand_ID: "$Brand_Name_LKP_Details._id",
+              Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
+              Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
+              Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
         
-                    Inserted_By: 1,
+              Sub_Service_id: "$Sub_Services_Details._id",
+              Sub_Service_Title_En: "$Sub_Services_Details.Sub_Service_Title_En",
+              Sub_Service_Title_Ar: "$Sub_Services_Details.Sub_Service_Title_Ar",
+                      
+              Inserted_By: 1,
               Inserted_DateTime: 1,
               Is_Suspended: 1,
               Updated_By: 1,
@@ -366,9 +385,10 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
               collectionName:1,
               User:1,
               Type:1,
+            }
+          },
         
-                }
-            },
+          
         
         ]).skip(skip).limit(pageSize);
       }
@@ -379,163 +399,172 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
       {
         val_Returned_Object = await Client_Vehicles_Advance_Notice_Period_Log_Model.aggregate
         ([
-
+  
           {
-              $addFields: 
-              {
-                collectionName: "Client_Vehicles_Advance_Notice_Period_Log"
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "User":"N/A",
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "Type":"General",
-              }
-          },
-        
-          {
-                $match:
-                {
-                    "Is_Suspended": false
-                }
-            },
-        
+            $addFields:
             {
-              $unionWith:
-              {
-                coll: 'Business_Vehicles_Advance_Notice_Period_Log',
-                pipeline:
-                [
-                  {
-                    $addFields: 
-                    {
-                      collectionName: "Business_Vehicles_Advance_Notice_Period_Log"
-                    }
-                },
-        
-                {
-                    $addFields: 
-                    {
-                      "Type":"Business",
-                    }
-                },
-        
-                {
-                      $match:
-                      {
-                          "Is_Suspended": false
-                      }
-                  },
-                      
-                {
-                      $lookup:
-                      {
-                          from: 'User_Data',
-                          localField: 'User_ID',
-                          foreignField: '_id',
-                          as: 'User_Data_Details'
-                      }
-                  },			    
-                  {
-                      $match:
-                      {
-                          "User_Data_Details.Is_Business": true
-                      }
-                  },
-                  {$unwind: '$User_Data_Details'},
-        
-                {
-                      $lookup:
-                      {
-                          from: 'Business_Organizations_LKP',
-                          localField: 'User_Data_Details.Business_Organization_ID',
-                          foreignField: '_id',
-                          as: 'Organization_Details'
-                    }
-                  },			    
-                  {$unwind: '$Organization_Details'},
-                {
-                    $addFields: 
-                    {
-                      "User":'$Organization_Details.Organization_Title_En',
-                    }
-                },				
-                ]
-              }
-            },
+              collectionName: "Client_Vehicles_Advance_Notice_Period_Log",
+              "User":"N/A",
+              "Type":"General",
+            }
+          },
         
           {
-                $lookup: 
+            $match:
+            {
+              Is_Suspended: false
+            }
+          },
+        
+          {
+            $unionWith:
+            {
+              coll: 'Business_Vehicles_Advance_Notice_Period_Log',
+              pipeline:
+              [
+        
                 {
-                    from: 'Vehicles_Data',
-                    localField: 'Vehicle_ID',
+                  $match:
+                  {
+                    Is_Suspended: false
+                  }
+                },
+        
+                {
+                  $lookup:
+                  {
+                    from: 'User_Data',
+                    localField: 'User_ID',
                     foreignField: '_id',
-                    as: 'Vehicles_Data_Details'
-                }
-            },
-            { $unwind: '$Vehicles_Data_Details' },
+                    as: 'User_Data_Details'
+                  }
+                },
         
+                {
+                  $match:
+                  {
+                    "User_Data_Details.Is_Business": true
+                  }
+                },
+        
+                {$unwind: '$User_Data_Details'},
+        
+                {
+                  $lookup:
+                  {
+                    from: 'Business_Organizations_LKP',
+                    localField: 'User_Data_Details.Business_Organization_ID',
+                    foreignField: '_id',
+                    as: 'Organization_Details'
+                  }
+                },
+        
+                {$unwind: '$Organization_Details'},
+        
+                {
+                  $addFields:
+                  {
+                    collectionName: "Business_Vehicles_Advance_Notice_Period_Log",
+                    "User":'$Organization_Details.Organization_Title_En',
+                    "Type":"Business",
+                  }
+                },
+        
+              ]
+            }
+          },
+        
+          {
+            $lookup:
             {
+              from: 'Vehicles_Data',
+              localField: 'Vehicle_ID',
+              foreignField: '_id',
+              as: 'Vehicles_Data_Details'
+            }
+          },
+        
+          { $unwind: '$Vehicles_Data_Details' },
+        
+          {
             $lookup:
             {
               from: 'Sub_Services_LKP',
-                    localField: 'Sub_Service_ID',
-                    foreignField: '_id',
-                    as: 'Sub_Services_Details'
+              localField: 'Sub_Service_ID',
+              foreignField: '_id',
+              as: 'Sub_Services_Details'
             }
           },
+        
           {$unwind: '$Sub_Services_Details'},
         
+          {
+            $lookup:
             {
-                $lookup:
-                {
-                    from: 'Model_LKP',
-                    localField: 'Vehicles_Data_Details.Model_ID',
-                    foreignField: '_id',
-                    as: 'Model_LKP_Details'
-                }
-            },
-            { $unwind: '$Model_LKP_Details' },
+              from: 'Model_LKP',
+              localField: 'Vehicles_Data_Details.Model_ID',
+              foreignField: '_id',
+              as: 'Model_LKP_Details'
+            }
+          },
         
-            {
-                $lookup:
-                {
-                    from: 'Brand_Name_LKP',
-                    localField: 'Model_LKP_Details.Brand_ID',
-                    foreignField: '_id',
-                    as: 'Brand_Name_LKP_Details'
-                }
-            },
-            { $unwind: '$Brand_Name_LKP_Details' },
+          { $unwind: '$Model_LKP_Details' },
         
           {
-                $project:
-                {
-                    _id:0,
+            $lookup:
+            {
+              from: 'Brand_Name_LKP',
+              localField: 'Model_LKP_Details.Brand_ID',
+              foreignField: '_id',
+              as: 'Brand_Name_LKP_Details'
+            }
+          },
         
-                    Serial_Number:1,
-                    Notice_Period_Per_Hours:1,
-                    Vehicle_ID: "$Vehicles_Data_Details._id",
+          { $unwind: '$Brand_Name_LKP_Details' },
         
-                    Model_ID: "$Model_LKP_Details._id",
-                    Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
-                    Model_Name_En: "$Model_LKP_Details.Model_Name_En",
-                    Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+          {
+            $group: 
+            {
+              _id: {
+                Notice_Period_Per_Hours: "$Notice_Period_Per_Hours",
+                Model_ID: "$Model_ID",
+                Sub_Service_Title_En: "$Sub_Service_Title_En",
+                Sub_Service_Title_Ar: "$Sub_Service_Title_Ar",
+                Sub_Service_id: "$Sub_Service_id",
+              },
+              firstDocument: { $first: "$$ROOT" }
+              
+            }
+          },
+          
+          {
+            $replaceRoot: { newRoot: "$firstDocument" }
+          },
         
-                    Brand_ID: "$Brand_Name_LKP_Details._id",
-                    Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
-                    Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
-                    Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
+          {
+            $project:
+            {
+              _id:0,
+                
+              Serial_Number:1,
+              Notice_Period_Per_Hours:1,
+              Vehicle_ID: "$Vehicles_Data_Details._id",
+                      
+              Model_ID: "$Model_LKP_Details._id",
+              Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
+              Model_Name_En: "$Model_LKP_Details.Model_Name_En",
+              Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+                      
+              Brand_ID: "$Brand_Name_LKP_Details._id",
+              Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
+              Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
+              Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
         
-                    Inserted_By: 1,
+              Sub_Service_id: "$Sub_Services_Details._id",
+              Sub_Service_Title_En: "$Sub_Services_Details.Sub_Service_Title_En",
+              Sub_Service_Title_Ar: "$Sub_Services_Details.Sub_Service_Title_Ar",
+                      
+              Inserted_By: 1,
               Inserted_DateTime: 1,
               Is_Suspended: 1,
               Updated_By: 1,
@@ -543,9 +572,10 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
               collectionName:1,
               User:1,
               Type:1,
+            }
+          },
         
-                }
-            },
+          
         
         ]);
       }
@@ -553,163 +583,172 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
       {
         val_Returned_Object = await Client_Vehicles_Advance_Notice_Period_Log_Model.aggregate
         ([
-
+  
           {
-              $addFields: 
-              {
-                collectionName: "Client_Vehicles_Advance_Notice_Period_Log"
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "User":"N/A",
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "Type":"General",
-              }
-          },
-        
-          {
-                $match:
-                {
-                    "Is_Suspended": false
-                }
-            },
-        
+            $addFields:
             {
-              $unionWith:
-              {
-                coll: 'Business_Vehicles_Advance_Notice_Period_Log',
-                pipeline:
-                [
-                  {
-                    $addFields: 
-                    {
-                      collectionName: "Business_Vehicles_Advance_Notice_Period_Log"
-                    }
-                },
-        
-                {
-                    $addFields: 
-                    {
-                      "Type":"Business",
-                    }
-                },
-        
-                {
-                      $match:
-                      {
-                          "Is_Suspended": false
-                      }
-                  },
-                      
-                {
-                      $lookup:
-                      {
-                          from: 'User_Data',
-                          localField: 'User_ID',
-                          foreignField: '_id',
-                          as: 'User_Data_Details'
-                      }
-                  },			    
-                  {
-                      $match:
-                      {
-                          "User_Data_Details.Is_Business": true
-                      }
-                  },
-                  {$unwind: '$User_Data_Details'},
-        
-                {
-                      $lookup:
-                      {
-                          from: 'Business_Organizations_LKP',
-                          localField: 'User_Data_Details.Business_Organization_ID',
-                          foreignField: '_id',
-                          as: 'Organization_Details'
-                    }
-                  },			    
-                  {$unwind: '$Organization_Details'},
-                {
-                    $addFields: 
-                    {
-                      "User":'$Organization_Details.Organization_Title_En',
-                    }
-                },				
-                ]
-              }
-            },
+              collectionName: "Client_Vehicles_Advance_Notice_Period_Log",
+              "User":"N/A",
+              "Type":"General",
+            }
+          },
         
           {
-                $lookup: 
+            $match:
+            {
+              Is_Suspended: false
+            }
+          },
+        
+          {
+            $unionWith:
+            {
+              coll: 'Business_Vehicles_Advance_Notice_Period_Log',
+              pipeline:
+              [
+        
                 {
-                    from: 'Vehicles_Data',
-                    localField: 'Vehicle_ID',
+                  $match:
+                  {
+                    Is_Suspended: false
+                  }
+                },
+        
+                {
+                  $lookup:
+                  {
+                    from: 'User_Data',
+                    localField: 'User_ID',
                     foreignField: '_id',
-                    as: 'Vehicles_Data_Details'
-                }
-            },
-            { $unwind: '$Vehicles_Data_Details' },
+                    as: 'User_Data_Details'
+                  }
+                },
         
+                {
+                  $match:
+                  {
+                    "User_Data_Details.Is_Business": true
+                  }
+                },
+        
+                {$unwind: '$User_Data_Details'},
+        
+                {
+                  $lookup:
+                  {
+                    from: 'Business_Organizations_LKP',
+                    localField: 'User_Data_Details.Business_Organization_ID',
+                    foreignField: '_id',
+                    as: 'Organization_Details'
+                  }
+                },
+        
+                {$unwind: '$Organization_Details'},
+        
+                {
+                  $addFields:
+                  {
+                    collectionName: "Business_Vehicles_Advance_Notice_Period_Log",
+                    "User":'$Organization_Details.Organization_Title_En',
+                    "Type":"Business",
+                  }
+                },
+        
+              ]
+            }
+          },
+        
+          {
+            $lookup:
             {
+              from: 'Vehicles_Data',
+              localField: 'Vehicle_ID',
+              foreignField: '_id',
+              as: 'Vehicles_Data_Details'
+            }
+          },
+        
+          { $unwind: '$Vehicles_Data_Details' },
+        
+          {
             $lookup:
             {
               from: 'Sub_Services_LKP',
-                    localField: 'Sub_Service_ID',
-                    foreignField: '_id',
-                    as: 'Sub_Services_Details'
+              localField: 'Sub_Service_ID',
+              foreignField: '_id',
+              as: 'Sub_Services_Details'
             }
           },
+        
           {$unwind: '$Sub_Services_Details'},
         
+          {
+            $lookup:
             {
-                $lookup:
-                {
-                    from: 'Model_LKP',
-                    localField: 'Vehicles_Data_Details.Model_ID',
-                    foreignField: '_id',
-                    as: 'Model_LKP_Details'
-                }
-            },
-            { $unwind: '$Model_LKP_Details' },
+              from: 'Model_LKP',
+              localField: 'Vehicles_Data_Details.Model_ID',
+              foreignField: '_id',
+              as: 'Model_LKP_Details'
+            }
+          },
         
-            {
-                $lookup:
-                {
-                    from: 'Brand_Name_LKP',
-                    localField: 'Model_LKP_Details.Brand_ID',
-                    foreignField: '_id',
-                    as: 'Brand_Name_LKP_Details'
-                }
-            },
-            { $unwind: '$Brand_Name_LKP_Details' },
+          { $unwind: '$Model_LKP_Details' },
         
           {
-                $project:
-                {
-                    _id:0,
+            $lookup:
+            {
+              from: 'Brand_Name_LKP',
+              localField: 'Model_LKP_Details.Brand_ID',
+              foreignField: '_id',
+              as: 'Brand_Name_LKP_Details'
+            }
+          },
         
-                    Serial_Number:1,
-                    Notice_Period_Per_Hours:1,
-                    Vehicle_ID: "$Vehicles_Data_Details._id",
+          { $unwind: '$Brand_Name_LKP_Details' },
         
-                    Model_ID: "$Model_LKP_Details._id",
-                    Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
-                    Model_Name_En: "$Model_LKP_Details.Model_Name_En",
-                    Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+          {
+            $group: 
+            {
+              _id: {
+                Notice_Period_Per_Hours: "$Notice_Period_Per_Hours",
+                Model_ID: "$Model_ID",
+                Sub_Service_Title_En: "$Sub_Service_Title_En",
+                Sub_Service_Title_Ar: "$Sub_Service_Title_Ar",
+                Sub_Service_id: "$Sub_Service_id",
+              },
+              firstDocument: { $first: "$$ROOT" }
+              
+            }
+          },
+          
+          {
+            $replaceRoot: { newRoot: "$firstDocument" }
+          },
         
-                    Brand_ID: "$Brand_Name_LKP_Details._id",
-                    Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
-                    Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
-                    Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
+          {
+            $project:
+            {
+              _id:0,
+                
+              Serial_Number:1,
+              Notice_Period_Per_Hours:1,
+              Vehicle_ID: "$Vehicles_Data_Details._id",
+                      
+              Model_ID: "$Model_LKP_Details._id",
+              Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
+              Model_Name_En: "$Model_LKP_Details.Model_Name_En",
+              Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+                      
+              Brand_ID: "$Brand_Name_LKP_Details._id",
+              Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
+              Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
+              Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
         
-                    Inserted_By: 1,
+              Sub_Service_id: "$Sub_Services_Details._id",
+              Sub_Service_Title_En: "$Sub_Services_Details.Sub_Service_Title_En",
+              Sub_Service_Title_Ar: "$Sub_Services_Details.Sub_Service_Title_Ar",
+                      
+              Inserted_By: 1,
               Inserted_DateTime: 1,
               Is_Suspended: 1,
               Updated_By: 1,
@@ -717,9 +756,10 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
               collectionName:1,
               User:1,
               Type:1,
+            }
+          },
         
-                }
-            },
+          
         
         ]).skip(skip).limit(pageSize);
       }
@@ -730,149 +770,158 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
       {
         val_Returned_Object = await Client_Vehicles_Advance_Notice_Period_Log_Model.aggregate
         ([
-
+  
           {
-              $addFields: 
-              {
-                collectionName: "Client_Vehicles_Advance_Notice_Period_Log"
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "User":"N/A",
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "Type":"General",
-              }
-          },
-        
+            $addFields:
             {
-              $unionWith:
-              {
-                coll: 'Business_Vehicles_Advance_Notice_Period_Log',
-                pipeline:
-                [
-                  {
-                    $addFields: 
-                    {
-                      collectionName: "Business_Vehicles_Advance_Notice_Period_Log"
-                    }
-                },
-        
-                {
-                    $addFields: 
-                    {
-                      "Type":"Business",
-                    }
-                },
-                      
-                {
-                      $lookup:
-                      {
-                          from: 'User_Data',
-                          localField: 'User_ID',
-                          foreignField: '_id',
-                          as: 'User_Data_Details'
-                      }
-                  },			    
-                  {
-                      $match:
-                      {
-                          "User_Data_Details.Is_Business": true
-                      }
-                  },
-                  {$unwind: '$User_Data_Details'},
-        
-                {
-                      $lookup:
-                      {
-                          from: 'Business_Organizations_LKP',
-                          localField: 'User_Data_Details.Business_Organization_ID',
-                          foreignField: '_id',
-                          as: 'Organization_Details'
-                    }
-                  },			    
-                  {$unwind: '$Organization_Details'},
-                {
-                    $addFields: 
-                    {
-                      "User":'$Organization_Details.Organization_Title_En',
-                    }
-                },				
-                ]
-              }
-            },
+              collectionName: "Client_Vehicles_Advance_Notice_Period_Log",
+              "User":"N/A",
+              "Type":"General",
+            }
+          },
         
           {
-                $lookup: 
+            $unionWith:
+            {
+              coll: 'Business_Vehicles_Advance_Notice_Period_Log',
+              pipeline:
+              [
+        
                 {
-                    from: 'Vehicles_Data',
-                    localField: 'Vehicle_ID',
+                  $lookup:
+                  {
+                    from: 'User_Data',
+                    localField: 'User_ID',
                     foreignField: '_id',
-                    as: 'Vehicles_Data_Details'
-                }
-            },
-            { $unwind: '$Vehicles_Data_Details' },
+                    as: 'User_Data_Details'
+                  }
+                },
         
+                {
+                  $match:
+                  {
+                    "User_Data_Details.Is_Business": true
+                  }
+                },
+        
+                {$unwind: '$User_Data_Details'},
+        
+                {
+                  $lookup:
+                  {
+                    from: 'Business_Organizations_LKP',
+                    localField: 'User_Data_Details.Business_Organization_ID',
+                    foreignField: '_id',
+                    as: 'Organization_Details'
+                  }
+                },
+        
+                {$unwind: '$Organization_Details'},
+        
+                {
+                  $addFields:
+                  {
+                    collectionName: "Business_Vehicles_Advance_Notice_Period_Log",
+                    "User":'$Organization_Details.Organization_Title_En',
+                    "Type":"Business",
+                  }
+                },
+        
+              ]
+            }
+          },
+        
+          {
+            $lookup:
             {
+              from: 'Vehicles_Data',
+              localField: 'Vehicle_ID',
+              foreignField: '_id',
+              as: 'Vehicles_Data_Details'
+            }
+          },
+        
+          { $unwind: '$Vehicles_Data_Details' },
+        
+          {
             $lookup:
             {
               from: 'Sub_Services_LKP',
-                    localField: 'Sub_Service_ID',
-                    foreignField: '_id',
-                    as: 'Sub_Services_Details'
+              localField: 'Sub_Service_ID',
+              foreignField: '_id',
+              as: 'Sub_Services_Details'
             }
           },
+        
           {$unwind: '$Sub_Services_Details'},
         
-            {
-                $lookup:
-                {
-                    from: 'Model_LKP',
-                    localField: 'Vehicles_Data_Details.Model_ID',
-                    foreignField: '_id',
-                    as: 'Model_LKP_Details'
-                }
-            },
-            { $unwind: '$Model_LKP_Details' },
-        
-            {
-                $lookup:
-                {
-                    from: 'Brand_Name_LKP',
-                    localField: 'Model_LKP_Details.Brand_ID',
-                    foreignField: '_id',
-                    as: 'Brand_Name_LKP_Details'
-                }
-            },
-            { $unwind: '$Brand_Name_LKP_Details' },           
-            
           {
-                $project:
-                {
-                    _id:0,
+            $lookup:
+            {
+              from: 'Model_LKP',
+              localField: 'Vehicles_Data_Details.Model_ID',
+              foreignField: '_id',
+              as: 'Model_LKP_Details'
+            }
+          },
         
-                    Serial_Number:1,
-                    Notice_Period_Per_Hours:1,
-                    Vehicle_ID: "$Vehicles_Data_Details._id",
+          { $unwind: '$Model_LKP_Details' },
         
-                    Model_ID: "$Model_LKP_Details._id",
-                    Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
-                    Model_Name_En: "$Model_LKP_Details.Model_Name_En",
-                    Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+          {
+            $lookup:
+            {
+              from: 'Brand_Name_LKP',
+              localField: 'Model_LKP_Details.Brand_ID',
+              foreignField: '_id',
+              as: 'Brand_Name_LKP_Details'
+            }
+          },
         
-                    Brand_ID: "$Brand_Name_LKP_Details._id",
-                    Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
-                    Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
-                    Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
+          { $unwind: '$Brand_Name_LKP_Details' },
         
-                    Inserted_By: 1,
+          {
+            $group: 
+            {
+              _id: {
+                Notice_Period_Per_Hours: "$Notice_Period_Per_Hours",
+                Model_ID: "$Model_ID",
+                Sub_Service_Title_En: "$Sub_Service_Title_En",
+                Sub_Service_Title_Ar: "$Sub_Service_Title_Ar",
+                Sub_Service_id: "$Sub_Service_id",
+              },
+              firstDocument: { $first: "$$ROOT" }
+              
+            }
+          },
+          
+          {
+            $replaceRoot: { newRoot: "$firstDocument" }
+          },
+        
+          {
+            $project:
+            {
+              _id:0,
+                
+              Serial_Number:1,
+              Notice_Period_Per_Hours:1,
+              Vehicle_ID: "$Vehicles_Data_Details._id",
+                      
+              Model_ID: "$Model_LKP_Details._id",
+              Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
+              Model_Name_En: "$Model_LKP_Details.Model_Name_En",
+              Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+                      
+              Brand_ID: "$Brand_Name_LKP_Details._id",
+              Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
+              Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
+              Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
+        
+              Sub_Service_id: "$Sub_Services_Details._id",
+              Sub_Service_Title_En: "$Sub_Services_Details.Sub_Service_Title_En",
+              Sub_Service_Title_Ar: "$Sub_Services_Details.Sub_Service_Title_Ar",
+                      
+              Inserted_By: 1,
               Inserted_DateTime: 1,
               Is_Suspended: 1,
               Updated_By: 1,
@@ -880,9 +929,10 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
               collectionName:1,
               User:1,
               Type:1,
+            }
+          },
         
-                }
-            },
+          
         
         ]);
       }
@@ -890,149 +940,158 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
       {
         val_Returned_Object = await Client_Vehicles_Advance_Notice_Period_Log_Model.aggregate
         ([
-
+  
           {
-              $addFields: 
-              {
-                collectionName: "Client_Vehicles_Advance_Notice_Period_Log"
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "User":"N/A",
-              }
-          },
-        
-          {
-              $addFields: 
-              {
-                "Type":"General",
-              }
-          },
-        
+            $addFields:
             {
-              $unionWith:
-              {
-                coll: 'Business_Vehicles_Advance_Notice_Period_Log',
-                pipeline:
-                [
-                  {
-                    $addFields: 
-                    {
-                      collectionName: "Business_Vehicles_Advance_Notice_Period_Log"
-                    }
-                },
-        
-                {
-                    $addFields: 
-                    {
-                      "Type":"Business",
-                    }
-                },
-                      
-                {
-                      $lookup:
-                      {
-                          from: 'User_Data',
-                          localField: 'User_ID',
-                          foreignField: '_id',
-                          as: 'User_Data_Details'
-                      }
-                  },			    
-                  {
-                      $match:
-                      {
-                          "User_Data_Details.Is_Business": true
-                      }
-                  },
-                  {$unwind: '$User_Data_Details'},
-        
-                {
-                      $lookup:
-                      {
-                          from: 'Business_Organizations_LKP',
-                          localField: 'User_Data_Details.Business_Organization_ID',
-                          foreignField: '_id',
-                          as: 'Organization_Details'
-                    }
-                  },			    
-                  {$unwind: '$Organization_Details'},
-                {
-                    $addFields: 
-                    {
-                      "User":'$Organization_Details.Organization_Title_En',
-                    }
-                },				
-                ]
-              }
-            },
+              collectionName: "Client_Vehicles_Advance_Notice_Period_Log",
+              "User":"N/A",
+              "Type":"General",
+            }
+          },
         
           {
-                $lookup: 
+            $unionWith:
+            {
+              coll: 'Business_Vehicles_Advance_Notice_Period_Log',
+              pipeline:
+              [
+        
                 {
-                    from: 'Vehicles_Data',
-                    localField: 'Vehicle_ID',
+                  $lookup:
+                  {
+                    from: 'User_Data',
+                    localField: 'User_ID',
                     foreignField: '_id',
-                    as: 'Vehicles_Data_Details'
-                }
-            },
-            { $unwind: '$Vehicles_Data_Details' },
+                    as: 'User_Data_Details'
+                  }
+                },
         
+                {
+                  $match:
+                  {
+                    "User_Data_Details.Is_Business": true
+                  }
+                },
+        
+                {$unwind: '$User_Data_Details'},
+        
+                {
+                  $lookup:
+                  {
+                    from: 'Business_Organizations_LKP',
+                    localField: 'User_Data_Details.Business_Organization_ID',
+                    foreignField: '_id',
+                    as: 'Organization_Details'
+                  }
+                },
+        
+                {$unwind: '$Organization_Details'},
+        
+                {
+                  $addFields:
+                  {
+                    collectionName: "Business_Vehicles_Advance_Notice_Period_Log",
+                    "User":'$Organization_Details.Organization_Title_En',
+                    "Type":"Business",
+                  }
+                },
+        
+              ]
+            }
+          },
+        
+          {
+            $lookup:
             {
+              from: 'Vehicles_Data',
+              localField: 'Vehicle_ID',
+              foreignField: '_id',
+              as: 'Vehicles_Data_Details'
+            }
+          },
+        
+          { $unwind: '$Vehicles_Data_Details' },
+        
+          {
             $lookup:
             {
               from: 'Sub_Services_LKP',
-                    localField: 'Sub_Service_ID',
-                    foreignField: '_id',
-                    as: 'Sub_Services_Details'
+              localField: 'Sub_Service_ID',
+              foreignField: '_id',
+              as: 'Sub_Services_Details'
             }
           },
+        
           {$unwind: '$Sub_Services_Details'},
         
+          {
+            $lookup:
             {
-                $lookup:
-                {
-                    from: 'Model_LKP',
-                    localField: 'Vehicles_Data_Details.Model_ID',
-                    foreignField: '_id',
-                    as: 'Model_LKP_Details'
-                }
-            },
-            { $unwind: '$Model_LKP_Details' },
+              from: 'Model_LKP',
+              localField: 'Vehicles_Data_Details.Model_ID',
+              foreignField: '_id',
+              as: 'Model_LKP_Details'
+            }
+          },
         
-            {
-                $lookup:
-                {
-                    from: 'Brand_Name_LKP',
-                    localField: 'Model_LKP_Details.Brand_ID',
-                    foreignField: '_id',
-                    as: 'Brand_Name_LKP_Details'
-                }
-            },
-            { $unwind: '$Brand_Name_LKP_Details' },
+          { $unwind: '$Model_LKP_Details' },
         
           {
-                $project:
-                {
-                    _id:0,
+            $lookup:
+            {
+              from: 'Brand_Name_LKP',
+              localField: 'Model_LKP_Details.Brand_ID',
+              foreignField: '_id',
+              as: 'Brand_Name_LKP_Details'
+            }
+          },
         
-                    Serial_Number:1,
-                    Notice_Period_Per_Hours:1,
-                    Vehicle_ID: "$Vehicles_Data_Details._id",
+          { $unwind: '$Brand_Name_LKP_Details' },
         
-                    Model_ID: "$Model_LKP_Details._id",
-                    Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
-                    Model_Name_En: "$Model_LKP_Details.Model_Name_En",
-                    Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+          {
+            $group: 
+            {
+              _id: {
+                Notice_Period_Per_Hours: "$Notice_Period_Per_Hours",
+                Model_ID: "$Model_ID",
+                Sub_Service_Title_En: "$Sub_Service_Title_En",
+                Sub_Service_Title_Ar: "$Sub_Service_Title_Ar",
+                Sub_Service_id: "$Sub_Service_id",
+              },
+              firstDocument: { $first: "$$ROOT" }
+              
+            }
+          },
+          
+          {
+            $replaceRoot: { newRoot: "$firstDocument" }
+          },
         
-                    Brand_ID: "$Brand_Name_LKP_Details._id",
-                    Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
-                    Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
-                    Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
+          {
+            $project:
+            {
+              _id:0,
+                
+              Serial_Number:1,
+              Notice_Period_Per_Hours:1,
+              Vehicle_ID: "$Vehicles_Data_Details._id",
+                      
+              Model_ID: "$Model_LKP_Details._id",
+              Model_Serial_Number: "$Model_LKP_Details.Serial_Number",
+              Model_Name_En: "$Model_LKP_Details.Model_Name_En",
+              Model_Name_Ar: "$Model_LKP_Details.Model_Name_Ar",
+                      
+              Brand_ID: "$Brand_Name_LKP_Details._id",
+              Brand_Serial_Number: "$Brand_Name_LKP_Details.Serial_Number",
+              Brand_Name_En: "$Brand_Name_LKP_Details.Brand_Name_En",
+              Brand_Name_Ar: "$Brand_Name_LKP_Details.Brand_Name_Ar",
         
-                    Inserted_By: 1,
+              Sub_Service_id: "$Sub_Services_Details._id",
+              Sub_Service_Title_En: "$Sub_Services_Details.Sub_Service_Title_En",
+              Sub_Service_Title_Ar: "$Sub_Services_Details.Sub_Service_Title_Ar",
+                      
+              Inserted_By: 1,
               Inserted_DateTime: 1,
               Is_Suspended: 1,
               Updated_By: 1,
@@ -1040,9 +1099,10 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
               collectionName:1,
               User:1,
               Type:1,
+            }
+          },
         
-                }
-            },
+          
         
         ]).skip(skip).limit(pageSize);
       }
@@ -1062,7 +1122,10 @@ exports.get_Data_By_SuspendStatus = async (suspendStatus,pageNumber) => {
 
 exports.Get_Vehicles_By_Model_ID = async (val_Model_ID) => {
   try {
-      return await tbl_Model.find({Model_ID:val_Model_ID}).select('_id');
+    var return_List = "";
+    return_List = await tbl_Model.find({Model_ID: new ObjectId(val_Model_ID) }).select('_id');
+    //console.log("return_List = "+return_List);
+    return return_List;
   } catch (error) {
       logger.error(error.message);
   }
@@ -1070,8 +1133,8 @@ exports.Get_Vehicles_By_Model_ID = async (val_Model_ID) => {
 
 exports.Suspend_vehicles_advance_notice_period_log = async (lkp_Table_Name,data,val_Updated_By,val_User_ID) => {
   try {
-    console.log("data="+data)
-    console.log("lkp_Table_Name="+lkp_Table_Name)
+    // console.log("data="+data)
+    // console.log("lkp_Table_Name="+lkp_Table_Name)
 
     const now_DateTime = require('../helpers/fun_datetime');
     var val_IDs = data;

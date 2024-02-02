@@ -699,230 +699,235 @@ exports.create_User =  async(req, res) => {
               val_New_User_Serial_Number = New_User_Serial_Number
 
               //#region insert_User_Data
-              sentData = new tbl_Model({
-                Serial_Number:val_New_User_Serial_Number,
-                Email:val_Email,
-                Password: bcrypt.hashSync(val_Password, 10),
-                First_Name:val_First_Name,
-                Last_Name:val_Last_Name,
-                User_Roles_ID:val_User_Roles_ID,
-                Phone_Number:val_Phone_Number,
-                Address:val_Address,
-                Location:val_Location,
-                Photo_Profile:val_Photo_Profile,
-                Inserted_DateTime:now_DateTime.get_DateTime(),
-                Is_Business:val_Is_Business,
-                Business_Organization_ID:val_Business_Organization_ID,
-                Is_Verified:false,
-                Is_Suspended:false,
-                Inserted_By:val_New_User_Serial_Number,
-              });
-              new Promise(async (resolve, reject)=>{
-                const newList = await fun_insert_row.insert_row("user_data",sentData);
-                resolve(newList);
-              }).then((insert_Flg) => {
-                if (insert_Flg.length<=0) {
-                  //#region msg 1 insert process failed
-                  new Promise(async (resolve, reject)=>{
-                    let result = await fun_handled_messages.get_handled_message(langTitle,1);
-                    resolve(result);
-                  }).then((msg) => {
-                    res.status(400).json({ data: [] , message: msg , status: "insert failed" }); 
-                  })
-                  //#endregion
-                } else {
-                  //#region msg insert process successed
-                  val_User_ID = insert_Flg._id;
-                  new Promise(async (resolve, reject)=>{
-                    let result = await fun_handled_messages.get_handled_message(langTitle,27);
-                    resolve(result);
-                  }).then((msg) => {
-                    //#region "Email & Phone" Generate Code , select Template , get Serial Number Promises
-                      let get_Email_Random_Code_Promise = new Promise(async (resolve, reject)=>{
-                        let result = await random.generate_Random_Value_Hex(3) +""+ await random.generate_Random_Value_Hex(3);
-                        resolve(result);
-                      });
-                      let select_Email_verification_Template_Form_Promise = new Promise(async (resolve, reject)=>{
-                        const Template_Form = await fun_get_Template_Form.get_Template_Form("2");
-                        resolve(Template_Form);
-                      });
-                      let get_Phone_Random_Code_Promise = new Promise(async (resolve, reject)=>{
-                        let result = await random.generate_Random_Value_Hex(3) +""+ await random.generate_Random_Value_Hex(3);
-                        resolve(result);
-                      });
-                      let select_Phone_verification_Template_Form_Promise = new Promise(async (resolve, reject)=>{
-                        const Template_Form = await fun_get_Template_Form.get_Template_Form("3");
-                        resolve(Template_Form);
-                      });
-                      let get_Email_Verification_Serial_Number_Promise = new Promise(async (resolve, reject)=>{
-                        var exist = await fun_get_serial_number.get_Serial_Number("useremailverification_log");
-                        resolve(exist);
-                      });
-                      let get_Phone_Verification_Serial_Number_Promise = new Promise(async (resolve, reject)=>{
-                        var exist = await fun_get_serial_number.get_Serial_Number("userphoneverification_log");
-                        resolve(exist);
-                      });
+              bcrypt.genSalt(saltRounds).then(salt => {
+                return bcrypt.hash(val_Password, salt)
+              }).then(hash => {
+                sentData = new tbl_Model({
+                  Serial_Number:val_New_User_Serial_Number,
+                  Email:val_Email,
+                  Password: hash,
+                  First_Name:val_First_Name,
+                  Last_Name:val_Last_Name,
+                  User_Roles_ID:val_User_Roles_ID,
+                  Phone_Number:val_Phone_Number,
+                  Address:val_Address,
+                  Location:val_Location,
+                  Photo_Profile:val_Photo_Profile,
+                  Inserted_DateTime:now_DateTime.get_DateTime(),
+                  Is_Business:val_Is_Business,
+                  Business_Organization_ID:val_Business_Organization_ID,
+                  Is_Verified:false,
+                  Is_Suspended:false,
+                  Inserted_By:val_New_User_Serial_Number,
+                });
+                new Promise(async (resolve, reject)=>{
+                  const newList = await fun_insert_row.insert_row("user_data",sentData);
+                  resolve(newList);
+                }).then((insert_Flg) => {
+                  if (insert_Flg.length<=0) {
+                    //#region msg 1 insert process failed
+                    new Promise(async (resolve, reject)=>{
+                      let result = await fun_handled_messages.get_handled_message(langTitle,1);
+                      resolve(result);
+                    }).then((msg) => {
+                      res.status(400).json({ data: [] , message: msg , status: "insert failed" }); 
+                    })
                     //#endregion
+                  } else {
+                    //#region msg insert process successed
+                    val_User_ID = insert_Flg._id;
+                    new Promise(async (resolve, reject)=>{
+                      let result = await fun_handled_messages.get_handled_message(langTitle,27);
+                      resolve(result);
+                    }).then((msg) => {
+                      //#region "Email & Phone" Generate Code , select Template , get Serial Number Promises
+                        let get_Email_Random_Code_Promise = new Promise(async (resolve, reject)=>{
+                          let result = await random.generate_Random_Value_Hex(3) +""+ await random.generate_Random_Value_Hex(3);
+                          resolve(result);
+                        });
+                        let select_Email_verification_Template_Form_Promise = new Promise(async (resolve, reject)=>{
+                          const Template_Form = await fun_get_Template_Form.get_Template_Form("2");
+                          resolve(Template_Form);
+                        });
+                        let get_Phone_Random_Code_Promise = new Promise(async (resolve, reject)=>{
+                          let result = await random.generate_Random_Value_Hex(3) +""+ await random.generate_Random_Value_Hex(3);
+                          resolve(result);
+                        });
+                        let select_Phone_verification_Template_Form_Promise = new Promise(async (resolve, reject)=>{
+                          const Template_Form = await fun_get_Template_Form.get_Template_Form("3");
+                          resolve(Template_Form);
+                        });
+                        let get_Email_Verification_Serial_Number_Promise = new Promise(async (resolve, reject)=>{
+                          var exist = await fun_get_serial_number.get_Serial_Number("useremailverification_log");
+                          resolve(exist);
+                        });
+                        let get_Phone_Verification_Serial_Number_Promise = new Promise(async (resolve, reject)=>{
+                          var exist = await fun_get_serial_number.get_Serial_Number("userphoneverification_log");
+                          resolve(exist);
+                        });
+                      //#endregion
 
-                    Promise.all([
-                      get_Email_Random_Code_Promise , 
-                      select_Email_verification_Template_Form_Promise , 
-                      get_Phone_Random_Code_Promise , 
-                      select_Phone_verification_Template_Form_Promise , 
-                      get_Email_Verification_Serial_Number_Promise , 
-                      get_Phone_Verification_Serial_Number_Promise]).then((Returned_Code) => {
-                        if (Returned_Code[0].length>0 && Returned_Code[1].length>0 && Returned_Code[2].length>0 && Returned_Code[3].length>0 && Returned_Code[4]>0 && Returned_Code[5]>0) {
-                          
-                          //#region useremailverification_log
-                          var useremailverification_log_Model = require("../models/useremailverification_log");
-
-                          let useremailverification_sentData = new useremailverification_log_Model({
-                            Serial_Number:Returned_Code[4],
-                            User_ID:val_User_ID,
-                            Code:Returned_Code[0],
-                            Inserted_DateTime:now_DateTime.get_DateTime(),
-                            Is_Expired:false,
-                          });
-
-                          let insert_Email_Verification_Promise = new Promise(async (resolve, reject)=>{
-                            const newList = await fun_insert_row.insert_row("useremailverification_log",useremailverification_sentData);
-                            resolve(newList);
-                          });
-                          //#endregion
-
-                          //#region userphoneverification_log
-                          var userphoneverification_log_Model = require("../models/userphoneverification_log");
-
-                          let Phone_verification_sentData = new userphoneverification_log_Model({
-                            Serial_Number:Returned_Code[5],
-                            User_ID:val_User_ID,
-                            Code:Returned_Code[2],
-                            Inserted_DateTime:now_DateTime.get_DateTime(),
-                            Is_Expired:false,
-                          });
-
-                          let insert_Phone_Verification_Promise = new Promise(async (resolve, reject)=>{
-                            const newList = await fun_insert_row.insert_row("userphoneverification_log",Phone_verification_sentData);
-                            resolve(newList);
-                          });
-                          //#endregion
-
-                          Promise.all([insert_Email_Verification_Promise , insert_Phone_Verification_Promise]).then((insert_Verifications) => {
-
-
-                            //#region prepare attributes for send email to new user to verify his account
-                            let msg_Content=Returned_Code[1];
-                            const val_From_Email = process.env.From_Email;
-                                  
-                            var val_Subject_Email = ""
-                            var val_MSG_Text_Email = ""
-                            var val_MSG_Description_Email = ""
-                                  
-                            if (langTitle=="en") {
-                              val_Subject_Email = msg_Content[0].Subject_En;
-                              
-                              val_MSG_Text_Email = msg_Content[0].Description_En;
-                              val_MSG_Text_Email = val_MSG_Text_Email.replace("Generated_Code", Returned_Code[0]);
-                                  
-                              val_MSG_Description_Email = msg_Content[0].Description_En;
-                              val_MSG_Description_Email = val_MSG_Description_Email.replace("Generated_Code", Returned_Code[0]);
-                            } else {
-                              val_Subject_Email = msg_Content[0].Subject_Ar;
-                                  
-                              val_MSG_Text_Email = msg_Content[0].Description_Ar;
-                              val_MSG_Text_Email = val_MSG_Text_Email.replace("Generated_Code", Returned_Code[0]);
-                                  
-                              val_MSG_Description_Email = msg_Content[0].Description_Ar;
-                              val_MSG_Description_Email = val_MSG_Description_Email.replace("Generated_Code", Returned_Code[0]);
-                            }
-                            val_MSG_Description_Email = "<div>"+val_MSG_Description_Email+"</div>";
-
-                            const mail = require("../mail/send_mail");
-                            const messageId = mail.sendEmailRequest(val_Email , val_From_Email , val_Subject_Email , val_MSG_Text_Email , val_MSG_Description_Email )
-                            //#endregion
+                      Promise.all([
+                        get_Email_Random_Code_Promise , 
+                        select_Email_verification_Template_Form_Promise , 
+                        get_Phone_Random_Code_Promise , 
+                        select_Phone_verification_Template_Form_Promise , 
+                        get_Email_Verification_Serial_Number_Promise , 
+                        get_Phone_Verification_Serial_Number_Promise]).then((Returned_Code) => {
+                          if (Returned_Code[0].length>0 && Returned_Code[1].length>0 && Returned_Code[2].length>0 && Returned_Code[3].length>0 && Returned_Code[4]>0 && Returned_Code[5]>0) {
                             
-                            //#region prepare attributes for send SMS Phone Message to new user to verify his account
-                            msg_Content=Returned_Code[3];
-                            var val_Subject_SMS = ""
-                            var val_MSG_Description_SMS = ""
+                            //#region useremailverification_log
+                            var useremailverification_log_Model = require("../models/useremailverification_log");
 
-                            if (langTitle=="en") {
-                              val_Subject_SMS = msg_Content[0].Subject_En;
-                                  
-                              val_MSG_Description_SMS = msg_Content[0].Description_En;
-                              val_MSG_Description_SMS = val_MSG_Description_SMS.replace("Generated_Code", Returned_Code[2]);
-                            } else {
-                              val_Subject_SMS = msg_Content[0].Subject_Ar;
-                                  
-                              val_MSG_Description_SMS = msg_Content[0].Description_Ar;
-                              val_MSG_Description_SMS = val_MSG_Description_SMS.replace("Generated_Code", Returned_Code[2]);
-                            }
-                            val_MSG_Description_SMS = val_MSG_Description_SMS;
+                            let useremailverification_sentData = new useremailverification_log_Model({
+                              Serial_Number:Returned_Code[4],
+                              User_ID:val_User_ID,
+                              Code:Returned_Code[0],
+                              Inserted_DateTime:now_DateTime.get_DateTime(),
+                              Is_Expired:false,
+                            });
 
-                            const sms = require("../sms/send_sms");
-                            var val_TO = insert_Flg.Phone_Number
-                            console.log("insert_Flg : "+insert_Flg)
-                            console.log("insert_Flg.Phone_Number : "+insert_Flg.Phone_Number)
-                            const messageObject = sms.sendSMSRequest(val_TO , val_MSG_Description_SMS);
-                            console.log("messageObject :: "+messageObject)
-                            if (!messageObject) {
-                              //#region sending SMS failed
-                              new Promise(async (resolve, reject)=>{
-                                let result = await fun_handled_messages.get_handled_message(langTitle,28);
-                                resolve(result);
-                              }).then((sms_result) => {
-                                res.status(400).json({ data: [] , message: sms_result , status: "sms failed" });
-                              })                          
-                              //#endregion
-                            } else {
-                              //#region sending SMS succeeded
-                              var SMS_Message_Model = require("../models/sms_message");
-
-                              let sms_sentData = new SMS_Message_Model({
-                                sid:messageObject.sid,
-                                date_created:messageObject.date_created,
-                                date_updated:messageObject.date_updated,
-                                date_sent:messageObject.date_sent,
-                                account_sid:messageObject.account_sid,
-                                to:messageObject.to,
-                                from:messageObject.from,
-                                messaging_service_sid:messageObject.messaging_service_sid,
-                                body:messageObject.body,
-                                status:messageObject.status,
-                                num_segments:messageObject.num_segments,
-                                num_segments:messageObject.num_segments,
-                                num_media:messageObject.num_media,
-                                direction:messageObject.direction,
-                                api_version:messageObject.api_version,
-                                price:messageObject.price,
-                                price_unit:messageObject.price_unit,
-                                error_code:messageObject.error_code,
-                                error_message:messageObject.error_message,
-                                uri:messageObject.uri,
-                                subresource_uris:{media:messageObject.media},
-                              });
-                              console.log("sms_sentData = "+sms_sentData)
-                              new Promise(async (resolve, reject)=>{
-                                const newList = await fun_insert_row.insert_row("sms_message",sms_sentData);
-                                resolve(newList);
-                              });
-                              //#endregion
-                            }
+                            let insert_Email_Verification_Promise = new Promise(async (resolve, reject)=>{
+                              const newList = await fun_insert_row.insert_row("useremailverification_log",useremailverification_sentData);
+                              resolve(newList);
+                            });
                             //#endregion
 
-                            res.status(200).json({ data: insert_Flg , message: msg , status: "insert successed" });
-                          })
-                        } else {
-                          res.status(400).json({ data: [] , message: "cannot create verification code" , status: "cannot create verification code" });
-                        }
-                                          
+                            //#region userphoneverification_log
+                            var userphoneverification_log_Model = require("../models/userphoneverification_log");
 
-                      })
+                            let Phone_verification_sentData = new userphoneverification_log_Model({
+                              Serial_Number:Returned_Code[5],
+                              User_ID:val_User_ID,
+                              Code:Returned_Code[2],
+                              Inserted_DateTime:now_DateTime.get_DateTime(),
+                              Is_Expired:false,
+                            });
+
+                            let insert_Phone_Verification_Promise = new Promise(async (resolve, reject)=>{
+                              const newList = await fun_insert_row.insert_row("userphoneverification_log",Phone_verification_sentData);
+                              resolve(newList);
+                            });
+                            //#endregion
+
+                            Promise.all([insert_Email_Verification_Promise , insert_Phone_Verification_Promise]).then((insert_Verifications) => {
 
 
-                  })
-                  //#endregion
-                }
+                              //#region prepare attributes for send email to new user to verify his account
+                              let msg_Content=Returned_Code[1];
+                              const val_From_Email = process.env.From_Email;
+                                    
+                              var val_Subject_Email = ""
+                              var val_MSG_Text_Email = ""
+                              var val_MSG_Description_Email = ""
+                                    
+                              if (langTitle=="en") {
+                                val_Subject_Email = msg_Content[0].Subject_En;
+                                
+                                val_MSG_Text_Email = msg_Content[0].Description_En;
+                                val_MSG_Text_Email = val_MSG_Text_Email.replace("Generated_Code", Returned_Code[0]);
+                                    
+                                val_MSG_Description_Email = msg_Content[0].Description_En;
+                                val_MSG_Description_Email = val_MSG_Description_Email.replace("Generated_Code", Returned_Code[0]);
+                              } else {
+                                val_Subject_Email = msg_Content[0].Subject_Ar;
+                                    
+                                val_MSG_Text_Email = msg_Content[0].Description_Ar;
+                                val_MSG_Text_Email = val_MSG_Text_Email.replace("Generated_Code", Returned_Code[0]);
+                                    
+                                val_MSG_Description_Email = msg_Content[0].Description_Ar;
+                                val_MSG_Description_Email = val_MSG_Description_Email.replace("Generated_Code", Returned_Code[0]);
+                              }
+                              val_MSG_Description_Email = "<div>"+val_MSG_Description_Email+"</div>";
+
+                              const mail = require("../mail/send_mail");
+                              const messageId = mail.sendEmailRequest(val_Email , val_From_Email , val_Subject_Email , val_MSG_Text_Email , val_MSG_Description_Email )
+                              //#endregion
+                              
+                              //#region prepare attributes for send SMS Phone Message to new user to verify his account
+                              msg_Content=Returned_Code[3];
+                              var val_Subject_SMS = ""
+                              var val_MSG_Description_SMS = ""
+
+                              if (langTitle=="en") {
+                                val_Subject_SMS = msg_Content[0].Subject_En;
+                                    
+                                val_MSG_Description_SMS = msg_Content[0].Description_En;
+                                val_MSG_Description_SMS = val_MSG_Description_SMS.replace("Generated_Code", Returned_Code[2]);
+                              } else {
+                                val_Subject_SMS = msg_Content[0].Subject_Ar;
+                                    
+                                val_MSG_Description_SMS = msg_Content[0].Description_Ar;
+                                val_MSG_Description_SMS = val_MSG_Description_SMS.replace("Generated_Code", Returned_Code[2]);
+                              }
+                              val_MSG_Description_SMS = val_MSG_Description_SMS;
+
+                              const sms = require("../sms/send_sms");
+                              var val_TO = insert_Flg.Phone_Number
+                              console.log("insert_Flg : "+insert_Flg)
+                              console.log("insert_Flg.Phone_Number : "+insert_Flg.Phone_Number)
+                              const messageObject = sms.sendSMSRequest(val_TO , val_MSG_Description_SMS);
+                              console.log("messageObject :: "+messageObject)
+                              if (!messageObject) {
+                                //#region sending SMS failed
+                                new Promise(async (resolve, reject)=>{
+                                  let result = await fun_handled_messages.get_handled_message(langTitle,28);
+                                  resolve(result);
+                                }).then((sms_result) => {
+                                  res.status(400).json({ data: [] , message: sms_result , status: "sms failed" });
+                                })                          
+                                //#endregion
+                              } else {
+                                //#region sending SMS succeeded
+                                var SMS_Message_Model = require("../models/sms_message");
+
+                                let sms_sentData = new SMS_Message_Model({
+                                  sid:messageObject.sid,
+                                  date_created:messageObject.date_created,
+                                  date_updated:messageObject.date_updated,
+                                  date_sent:messageObject.date_sent,
+                                  account_sid:messageObject.account_sid,
+                                  to:messageObject.to,
+                                  from:messageObject.from,
+                                  messaging_service_sid:messageObject.messaging_service_sid,
+                                  body:messageObject.body,
+                                  status:messageObject.status,
+                                  num_segments:messageObject.num_segments,
+                                  num_segments:messageObject.num_segments,
+                                  num_media:messageObject.num_media,
+                                  direction:messageObject.direction,
+                                  api_version:messageObject.api_version,
+                                  price:messageObject.price,
+                                  price_unit:messageObject.price_unit,
+                                  error_code:messageObject.error_code,
+                                  error_message:messageObject.error_message,
+                                  uri:messageObject.uri,
+                                  subresource_uris:{media:messageObject.media},
+                                });
+                                console.log("sms_sentData = "+sms_sentData)
+                                new Promise(async (resolve, reject)=>{
+                                  const newList = await fun_insert_row.insert_row("sms_message",sms_sentData);
+                                  resolve(newList);
+                                });
+                                //#endregion
+                              }
+                              //#endregion
+
+                              res.status(200).json({ data: insert_Flg , message: msg , status: "insert successed" });
+                            })
+                          } else {
+                            res.status(400).json({ data: [] , message: "cannot create verification code" , status: "cannot create verification code" });
+                          }
+                                            
+
+                        })
+
+
+                    })
+                    //#endregion
+                  }
+                })
+
               })
               //#endregion
 

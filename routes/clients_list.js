@@ -2,6 +2,11 @@ const express = require("express");
 const {
     edit_client,
     create_client_with_settings,
+
+    create_service_settings,
+    create_service_prices,
+    create_add_on_settings,
+    create_terms_conditions,
 } = require("../controllers/clients_list");
  
 const router = express.Router();
@@ -42,11 +47,39 @@ const uploadOptions = multer({ storage: storage });
 //#endregion
 router.route("/:langTitle/clients_list/edit_client/:id").put(uploadOptions.single('Photo_Profile'),edit_client);
 
-
 //#region API Links Explanation
 //http://localhost:27017/api/v1/en/clients_list/create_client_with_settings
 //http://localhost:27017/api/v1/:langTitle/clients_list/create_client_with_settings
 //#endregion
 router.route("/:langTitle/clients_list/create_client_with_settings").post(create_client_with_settings)
+
+
+
+//#region API Links Explanation
+//http://localhost:27017/api/v1/en/clients_list/create_service_settings
+//http://localhost:27017/api/v1/:langTitle/clients_list/create_service_settings
+//#endregion
+router.route("/:langTitle/clients_list/create_service_settings").post(create_service_settings)
+
+//#region API Links Explanation
+//http://localhost:27017/api/v1/en/clients_list/create_service_prices
+//http://localhost:27017/api/v1/:langTitle/clients_list/create_service_prices
+//#endregion
+router.route("/:langTitle/clients_list/create_service_prices").post(create_service_prices)
+
+//#region API Links Explanation
+//http://localhost:27017/api/v1/en/clients_list/create_add_on_settings
+//http://localhost:27017/api/v1/:langTitle/clients_list/create_add_on_settings
+//#endregion
+router.route("/:langTitle/clients_list/create_add_on_settings").post(create_add_on_settings)
+
+//#region API Links Explanation
+//http://localhost:27017/api/v1/en/clients_list/create_terms_conditions
+//http://localhost:27017/api/v1/:langTitle/clients_list/create_terms_conditions
+//#endregion
+router.route("/:langTitle/clients_list/create_terms_conditions").post(create_terms_conditions)
+
+
+
 
 module.exports = router;

@@ -337,3 +337,54 @@ exports.check_Existancy = async (val_Operation  , val_Id , val_Method_Title_En  
   }
 };
 
+exports.check_Title_En_Existancy = async (val_Operation  , val_Id , val_Method_Title_En) => {
+    try {
+      if (val_Operation=="insert")
+      {
+        //#region insert
+        return await tbl_Model.find({Method_Title_En: val_Method_Title_En});
+        //#endregion
+      }
+      else
+      {
+        //#region update
+        return await tbl_Model.find
+        ({
+          $and:
+          [
+            {Method_Title_En: val_Method_Title_En},
+            {'_id': {$ne : new ObjectId(val_Id)}}
+          ]      
+        });
+        //#endregion
+      }
+    } catch (error) {
+      logger.error(error.message);
+    }
+};
+
+exports.check_Title_Ar_Existancy = async (val_Operation  , val_Id , val_Method_Title_Ar) => {
+    try {
+      if (val_Operation=="insert")
+      {
+        //#region insert
+        return await tbl_Model.find({Method_Title_Ar: val_Method_Title_Ar});
+        //#endregion
+      }
+      else
+      {
+        //#region update
+        return await tbl_Model.find
+        ({
+          $and:
+          [
+            {Method_Title_Ar: val_Method_Title_Ar},
+            {'_id': {$ne : new ObjectId(val_Id)}}
+          ]      
+        });
+        //#endregion
+      }
+    } catch (error) {
+      logger.error(error.message);
+    }
+  };

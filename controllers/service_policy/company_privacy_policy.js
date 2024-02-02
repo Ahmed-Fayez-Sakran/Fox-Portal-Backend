@@ -1,19 +1,19 @@
 //#region Global Variables
-var tbl_Model = require("../models/company_privacy_policy");
-const tbl_Service = require("../services/company_privacy_policy");
-const now_DateTime = require('../helpers/fun_datetime');
-const fun_handled_messages = require('../helpers/fun_handled_messages');
-const fun_get_serial_number = require('../helpers/fun_get_serial_number');
-const fun_insert_row = require('../helpers/fun_insert_row');
-const fun_update_row = require('../helpers/fun_update_row');
+var tbl_Model = require("../../models/company_privacy_policy");
+const tbl_Service = require("../../services/company_privacy_policy");
+const now_DateTime = require('../../helpers/fun_datetime');
+const fun_handled_messages = require('../../helpers/fun_handled_messages');
+const fun_get_serial_number = require('../../helpers/fun_get_serial_number');
+const fun_insert_row = require('../../helpers/fun_insert_row');
+const fun_update_row = require('../../helpers/fun_update_row');
 //const logger = require('../helpers/fun_insert_Logger');
-var loggers_Model = require("../models/logger");
+var loggers_Model = require("../../models/logger");
 let loggers_Data = ""
 var langTitle = ""
 let insert_Promise = ""
 let get_Message_Promise = ""
 let sentData = ""
-const logger = require('../utils/logger');
+const logger = require('../../utils/logger');
 //#endregion
 
 exports.get_company_privacy_policy =  async(req, res) => {
@@ -21,27 +21,42 @@ exports.get_company_privacy_policy =  async(req, res) => {
         //#region Global Variables
         const suspendStatus = req.params.suspendStatus;
         langTitle = req.params.langTitle;
+        var val_Page_Number = req.params.page_number;
+        console.log("val_Page_Number ="+val_Page_Number)
         //#endregion
-          
-        new Promise(async (resolve, reject)=>{
-            var returnedList = await tbl_Service.get_privacy_policy_By_SuspendStatus(suspendStatus);
+
+        let get_DataTable_Promise = new Promise(async (resolve, reject)=>{
+            var returnedList = await tbl_Service.get_privacy_policy_By_SuspendStatus(suspendStatus,val_Page_Number);
             resolve(returnedList);
-          }).then((returned_Users) => {
-    
-            if((!returned_Users)||(returned_Users.length<=0)) {
-                
-                new Promise(async (resolve, reject)=>{
-                    var result = await fun_handled_messages.get_handled_message(langTitle,36);
-                    resolve(result);
-                }).then((msg) => {
-                    res.status(404).json({data: [] , message: msg , status: "empty rows" });
-                })
-    
-            } else{
-                res.status(200).json({ data: returned_Users , message: "rows selected", status: "success" });
+        });
+          
+        let get_Message_Promise = new Promise(async (resolve, reject)=>{
+            var result = ""
+            //#region Get Message based on suspend Status and language Title
+            if (suspendStatus=="only-true"){
+                result = await fun_handled_messages.get_handled_message(langTitle,298);
+            }else if(suspendStatus=="only-false"){
+                result = await fun_handled_messages.get_handled_message(langTitle,299);
+            }else if(suspendStatus=="all"){
+                result = await fun_handled_messages.get_handled_message(langTitle,297);
+            }else{
+                result = await fun_handled_messages.get_handled_message(langTitle,22);
             }
-    
-        })
+            //#endregion
+            resolve(result);
+        });
+
+        Promise.all([get_DataTable_Promise , get_Message_Promise]).then((results) => {
+            if (results[0].length<=0) {
+                if ((suspendStatus.trim() ==="only-true")||(suspendStatus.trim() ==="only-false")||(suspendStatus.trim() ==="all")) {
+                  res.status(200).json({ data: [] , message: results[1] , status: "empty rows" });
+                } else {
+                    res.status(404).json({ data: [] , message: results[1] , status: "wrong url" });
+                }
+            } else {
+                res.status(200).json({ data: results[0] , message: "" , status: "rows selected" });
+            }
+        });
   
     } catch (error) {
         logger.error(error.message);
@@ -62,7 +77,7 @@ exports.create_Row =  async(req, res) => {
             var returnedList = await tbl_Service.get_Last_privacy_policy();
             resolve(returnedList);
         }).then((tbl_Exist) => {
-            if (!tbl_Exist || tbl_Exist.Is_Suspended) {
+            if (!tbl_Exist) {
                 //#region First Row insertion process in the collection
                 sentData = new tbl_Model({
                     Serial_Number: val_Serial_Number,

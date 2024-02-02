@@ -20,9 +20,7 @@ module.exports.insert_rows = async (lkp_Table_Name,DataRows_Collection) => {
         }
         else if (lkp_Table_Name=="courier_details"){
             tbl_Model = require("../models/courier_details");
-        }
-
-        
+        }        
         else {
             return"";
         }

@@ -85,7 +85,44 @@ module.exports.Update_Suspend_Status_Many_Rows = async (status, data , Updated_B
         else if (lkp_Table_Name=="drivers_data") {
           tbl_Model = require("../models/drivers_data");
         }
+        else if (lkp_Table_Name=="promo_code_data") {
+          tbl_Model = require("../models/promo_code_data");
+        }
+        else if (lkp_Table_Name=="business_sub_services_settings_log") 
+        {
+          tbl_Model = require("../models/business_sub_services_settings_log");
+        }
+        else if (lkp_Table_Name=="client_sub_services_settings_log") 
+        {
+          tbl_Model = require("../models/client_sub_services_settings_log");
+        }
         
+        else if (lkp_Table_Name=="airline_lkp") {
+          tbl_Model = require("../models/airline_lkp");
+      } else if (lkp_Table_Name=="cancel_reason_lkp") {
+          tbl_Model = require("../models/cancel_reason_lkp");
+      } else if (lkp_Table_Name=="courier_categories_lkp") {
+          tbl_Model = require("../models/courier_categories_lkp");
+      } else if (lkp_Table_Name=="creditcard_type_lkp") {
+          tbl_Model = require("../models/creditcard_type_lkp");
+      } else if (lkp_Table_Name=="extra_reason_lkp") {
+          tbl_Model = require("../models/extra_reason_lkp");
+      } else if (lkp_Table_Name=="payment_method_lkp") {
+          tbl_Model = require("../models/payment_method_lkp");
+      } else if (lkp_Table_Name=="refund_reason_lkp") {
+          tbl_Model = require("../models/refund_reason_lkp");
+      } else if (lkp_Table_Name=="report_reason_lkp") {
+          tbl_Model = require("../models/report_reason_lkp");
+      } else if (lkp_Table_Name=="discount_type_lkp") {
+          tbl_Model = require("../models/discount_type_lkp");
+      } else if (lkp_Table_Name=="vehicle_change_reasons_lkp") {
+          tbl_Model = require("../models/vehicle_change_reasons_lkp");
+      } else if (lkp_Table_Name=="order_status_lkp") {
+          tbl_Model = require("../models/order_status_lkp");
+      } else if (lkp_Table_Name=="user_roles_lkp") {
+          tbl_Model = require("../models/user_roles_lkp");
+      }
+
         //#region Comments
           
         //   else if (lkp_Table_Name=="airline_lkp") {
@@ -145,14 +182,7 @@ module.exports.Update_Suspend_Status_Many_Rows = async (status, data , Updated_B
         //   else if (lkp_Table_Name=="business_services_with_addons_prices_log") {
         //       tbl_Model = require("../models/business_services_with_addons_prices_log");
         //   }
-        //   else if (lkp_Table_Name=="business_sub_services_settings_log") 
-        //   {
-        //       tbl_Model = require("../models/business_sub_services_settings_log");
-        //   }
-        //   else if (lkp_Table_Name=="client_sub_services_settings_log") 
-        //   {
-        //       tbl_Model = require("../models/client_sub_services_settings_log");
-        //   }
+        
         //#endregion
         else {
             return"";

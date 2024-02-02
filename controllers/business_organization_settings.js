@@ -92,6 +92,7 @@ exports.Edit_Business_Organization =  async(req, res) => {
                         //#region Ar already exist
                         new Promise(async (resolve, reject)=>{
                             var msg = await fun_handled_messages.get_handled_message(langTitle,55);
+                            resolve(msg)
                         }).then((msg) => {
                             msg = msg.replace("Organization_Title_Ar", val_Organization_Title_Ar);
                             res.status(200).json({ data:[], message: msg, status: "already exist" });
@@ -101,6 +102,7 @@ exports.Edit_Business_Organization =  async(req, res) => {
                         //#region En already exist
                         new Promise(async (resolve, reject)=>{
                             var msg = await fun_handled_messages.get_handled_message(langTitle,56);
+                            resolve(msg)
                         }).then((msg) => {
                             msg = msg.replace("Organization_Title_En", val_Organization_Title_En);
                             res.status(200).json({ data:[], message: msg, status: "already exist" });

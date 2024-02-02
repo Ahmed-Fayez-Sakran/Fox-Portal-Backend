@@ -25,7 +25,6 @@ const api = process.env.API_URL;
 
 //#region Routes
 
-
     //#region Common
 
         //#region serial_number
@@ -43,18 +42,12 @@ const api = process.env.API_URL;
         app.use(`${api}/`, user_data_Routes);
         //#endregion
 
-        //#region company privacy policy
-        const company_privacy_policy_Routes = require("./routes/company_privacy_policy");
-        app.use(`${api}`, company_privacy_policy_Routes);
-        //#endregion
-
         //#region Clients List
         const clients_list_Routes = require("./routes/clients_list");
         app.use(`${api}/`, clients_list_Routes);
         //#endregion
         
     //#endregion
-
 
     //#region services
 
@@ -98,7 +91,7 @@ const api = process.env.API_URL;
         app.use(`${api}/services/bus_trip_full_day_package_log/`, bus_trip_full_day_package_Routes);
         //#endregion
 
-        //#region Bus Trip Full Day Package Log
+        //#region Valet Schedule Package Log
         const Valet_Schedule_Package_Log_Routes = require("./routes/services/valet_schedule_package_log");
         app.use(`${api}/services/valet_schedule_package_log/`, Valet_Schedule_Package_Log_Routes);
         //#endregion
@@ -108,8 +101,17 @@ const api = process.env.API_URL;
         app.use(`${api}/services/service_prices/`, service_prices_Routes);
         //#endregion 
 
-    //#endregion
+        //#region Add-Ons Prices
+        const add_ons_pricing_Routes = require("./routes/services/add_ons_pricing");
+        app.use(`${api}/services/add_ons_pricing/`, add_ons_pricing_Routes);
+        //#endregion
 
+        //#region Service Settings
+        const service_settings_Routes = require("./routes/services/service_settings");
+        app.use(`${api}/services/service_settings/`, service_settings_Routes);
+        //#endregion
+
+    //#endregion
 
     //#region Vehicles
 
@@ -182,10 +184,10 @@ const api = process.env.API_URL;
         app.use(`${api}/offers/discounts/`, discounts_Routes);
         //#endregion
 
-        // //#region Promo Codes
+        //#region Promo Codes
         const promo_codes_Routes = require("./routes/offers/promo_codes");
         app.use(`${api}/offers/promo_codes/`, promo_codes_Routes);
-        // //#endregion
+        //#endregion
         
     //#endregion
 
@@ -193,6 +195,36 @@ const api = process.env.API_URL;
     const drivers_Routes = require("./routes/drivers");
     app.use(`${api}/drivers/`, drivers_Routes);
     //#endregion
+
+    //#region Service Policy
+
+        //#region company privacy policy
+        const company_privacy_policy_Routes = require("./routes/service_policy/company_privacy_policy");
+        app.use(`${api}/service_policy`, company_privacy_policy_Routes);
+        //#endregion
+        
+        //#region Terms Conditions
+        const terms_conditions_Routes = require("./routes/service_policy/terms_conditions");
+        app.use(`${api}/service_policy`, terms_conditions_Routes);
+        //#endregion
+
+    //#endregion
+
+    //#region General Settings
+    const general_settings_Routes = require("./routes/general_settings/general_settings");
+    app.use(`${api}/general_settings`, general_settings_Routes);
+    //#endregion
+    
+    //#region Home
+    const dashboard_Routes = require("./routes/home/dashboard");
+    app.use(`${api}/home/dashboard`, dashboard_Routes);
+    //#endregion
+    
+    //#region B2C_Limousine Services
+    const b2c_Routes = require("./routes/b2c/limousine_services");
+    app.use(`${api}/b2c/limousine_services`, b2c_Routes);
+    //#endregion
+
 
 
 //#endregion

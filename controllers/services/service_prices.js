@@ -8,6 +8,7 @@ const fun_handled_messages = require('../../helpers/fun_handled_messages');
 const fun_check_Existancy_By_ID = require('../../helpers/fun_check_Existancy_By_ID');
 const fun_check_Existancy_By_List_IDS = require('../../helpers/fun_check_Existancy_By_List_IDS');
 const fun_insert_rows = require('../../helpers/fun_insert_rows');
+const fun_update_row = require('../../helpers/fun_update_row');
 const fun_Update_Suspend_Status_Many_Rows = require('../../helpers/fun_Update_Suspend_Status_Many_Rows');
 const logger = require('../../utils/logger');
 const { Console } = require("winston/lib/winston/transports");
@@ -1246,268 +1247,153 @@ exports.create_Row =  async(req, res) => {
 
 exports.Suspend_Row =  async(req, res) => {
 
-    // try {
-    //     //#region Global Variables
-    //     langTitle = req.params.langTitle;
-    //     let val_ID = (req.params.id).trim();
-    //     var val_Sub_Service_ID = req.body.Sub_Service_ID;
-    //     var val_Price_Type = req.body.Price_Type;
-    //     var val_Updated_By = req.body.Updated_By;
-    //     var val_Is_Suspended = req.body.Is_Suspended;
-    //     //#endregion
+    try {
+        //#region Global Variables
+        langTitle = req.params.langTitle;
+        let val_ID = (req.params.id).trim();
+        var val_Sub_Service_ID = req.body.Sub_Service_ID;
+        var val_Price_Type = req.body.Price_Type;
+        var val_Updated_By = req.body.Updated_By;
+        var val_Is_Suspended = true;//req.body.Is_Suspended
+        //#endregion
 
-    //     if (val_Price_Type=="business") {
-    //         //#region Business_Prices_Log
+        if (val_Price_Type=="business") {
+            //#region Business_Prices_Log
 
-    //         new Promise(async (resolve, reject)=>{
-    //             let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("sub_services_lkp",val_Sub_Service_ID);
-    //             resolve(returnedList);
-    //         }).then((returned_ID) => {
-    //             if (!returned_ID) {
-    //                 //#region ID is not exist in DB msg 75
-    //                 new Promise(async (resolve, reject)=>{
-    //                     var result = await fun_handled_messages.get_handled_message(langTitle,75);
-    //                     resolve(result);
-    //                 }).then((msg) => {        
-    //                     res.status(400).json({ data: [] , message: msg, status: "wrong id" });
-    //                 })
-    //                 //#endregion
-    //             } else {                    
+            new Promise(async (resolve, reject)=>{
+                let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("sub_services_lkp",val_Sub_Service_ID);
+                resolve(returnedList);
+            }).then((returned_ID) => {
+                if (!returned_ID) {
+                    //#region ID is not exist in DB msg 14
+                    new Promise(async (resolve, reject)=>{
+                        var result = await fun_handled_messages.get_handled_message(langTitle,14);
+                        resolve(result);
+                    }).then((msg) => {        
+                        res.status(400).json({ data: [] , message: msg, status: "wrong id" });
+                    })
+                    //#endregion
+                } else {
+                    //#region ID exist in DB
+                    var recievedData = "";
+                    new Promise(async (resolve, reject)=>{
+                        let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("business_prices_log",val_ID);
+                        resolve(returnedList);
+                    }).then((returned_ID) => {
+                        if (!returned_ID) {
+                            //#region ID is not exist in DB msg 14
+                            new Promise(async (resolve, reject)=>{
+                                var result = await fun_handled_messages.get_handled_message(langTitle,14);
+                                resolve(result);
+                            }).then((msg) => {        
+                                res.status(400).json({ data: [] , message: msg, status: "wrong id" });
+                            })
+                            //#endregion
+                        } else {
+                            //#region update proces
+                            tbl_Model = require("../../models/business_prices_log");
+                            recievedData = new tbl_Model({
+                                Updated_By: val_Updated_By,
+                                Updated_DateTime: now_DateTime.get_DateTime(),
+                                Is_Suspended: val_Is_Suspended
+                            },{ new: true});
+                            new Promise(async (resolve, reject)=>{
+                                const newList = await fun_update_row.update_row(val_ID, "business_prices_log", recievedData , false);
+                                resolve(newList);
+                            }).then((update_Flg) => {
+                                if (!update_Flg) {
+                                    //#region msg 2 update process failed
+                                    new Promise(async (resolve, reject)=>{
+                                        let result = await fun_handled_messages.get_handled_message(langTitle,2);
+                                        resolve(result);
+                                    }).then((msg) => {
+                                        res.status(400).json({ data: [] , message: msg , status: "update failed" }); 
+                                    })
+                                    //#endregion
+                                } else {
+                                    //#region msg update process successed
+                                    new Promise(async (resolve, reject)=>{
+                                        var result = await fun_handled_messages.get_handled_message(langTitle,318);
+                                        resolve(result);
+                                    }).then((msg) => {
+                                        res.status(200).json({ data: update_Flg , message: msg , status: "updated successed" });
+                                    })
+                                    //#endregion
+                                }
+                            })
+                            //#endregion
+                        }
+                    })
+                    //#endregion
+                }
+            })
 
-    //                 //#region Set Unique Fields based on sub service ID
-    //                 var recievedData = "";
-    //                 var recievedData_full_day_booking = "";
-    //                 var recievedData_bus_full_day_booking = "";
-    //                 var recievedData_schedule_valet = "";
-    //                 var Updated_Succeeded_Flag = false;
-
-    //                 if ( (val_Sub_Service_ID =="65200ef56be397bb41100884") || (val_Sub_Service_ID =="65200ef56be397bb41100885") || (val_Sub_Service_ID =="65200ef56be397bb41100886") || (val_Sub_Service_ID =="65200ef56be397bb41100887") || (val_Sub_Service_ID =="65200ef56be397bb41100888") || (val_Sub_Service_ID =="65200ef56be397bb4110088a") || (val_Sub_Service_ID =="65200ef56be397bb4110088b") || (val_Sub_Service_ID =="65200ef56be397bb4110088c") || (val_Sub_Service_ID =="65200ef56be397bb4110088d") || (val_Sub_Service_ID =="65200ef56be397bb4110088f") || (val_Sub_Service_ID =="65200ef56be397bb41100890") || (val_Sub_Service_ID =="65200ef56be397bb41100892") )
-    //                 {
-    //                     //#region Common Services
-    //                     new Promise(async (resolve, reject)=>{
-    //                         let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("business_prices_log",val_ID);
-    //                         resolve(returnedList);
-    //                     }).then((returned_ID) => {
-    //                         if (!returned_ID) {
-    //                             //#region ID is not exist in DB msg 75
-    //                             new Promise(async (resolve, reject)=>{
-    //                                 var result = await fun_handled_messages.get_handled_message(langTitle,75);
-    //                                 resolve(result);
-    //                             }).then((msg) => {        
-    //                                 res.status(400).json({ data: [] , message: msg, status: "wrong id" });
-    //                             })
-    //                             //#endregion
-    //                         } else {
-    //                             //#region update proces
-    //                             tbl_Model = require("../../models/business_prices_log");
-    //                             recievedData = new tbl_Model({
-    //                                 Updated_By: val_Updated_By,
-    //                                 Updated_DateTime: now_DateTime.get_DateTime(),
-    //                                 Is_Suspended: val_Is_Suspended
-    //                             },{ new: true});
-    //                             new Promise(async (resolve, reject)=>{
-    //                                 const newList = await tbl_Service.update_DataRow("business_prices_log",val_ID, recievedData);
-    //                                 resolve(newList);
-    //                             }).then((update_Flg) => {
-    //                                 if (!update_Flg) {
-    //                                     //#region msg 2 update process failed
-    //                                     new Promise(async (resolve, reject)=>{
-    //                                         let result = await fun_handled_messages.get_handled_message(langTitle,2);
-    //                                         resolve(result);
-    //                                     }).then((msg) => {
-    //                                         res.status(400).json({ data: [] , message: msg , status: "update failed" }); 
-    //                                     })
-    //                                     //#endregion
-    //                                 } else {
-    //                                     //#region msg update process successed
-    //                                     new Promise(async (resolve, reject)=>{
-    //                                         var result = await fun_handled_messages.get_handled_message(langTitle,427);
-    //                                         resolve(result);
-    //                                     }).then((msg) => {
-    //                                         res.status(200).json({ data: update_Flg , message: msg , status: "updated successed" });
-    //                                     })
-    //                                     //#endregion
-    //                                 }
-    //                             })
-    //                             //#endregion
-    //                         }
-    //                     })
-    //                     //#endregion
-    //                 }
-    //                 else if ( (val_Sub_Service_ID =="65200ef56be397bb41100889"))
-    //                 {
-    //                     //#region full_day_booking
-    //                     // tbl_Model = require("../../models/business_prices_log");
-    //                     // recievedData = new tbl_Model({
-    //                     //     Updated_By: val_Updated_By,
-    //                     //     Updated_DateTime: now_DateTime.get_DateTime(),
-    //                     //     Is_Suspended: val_Is_Suspended
-    //                     // },{ new: true});
-
-    //                     // var Business_Full_Day_Details_Log_Model = require("../../models/business_full_day_details_log");
-    //                     // recievedData_full_day_booking = new Business_Full_Day_Details_Log_Model({
-    //                     //     Updated_By: val_Updated_By,
-    //                     //     Updated_DateTime: now_DateTime.get_DateTime(),
-    //                     //     Is_Suspended: val_Is_Suspended
-    //                     // },{ new: true});
-    //                     //#endregion
-    //                 }
-    //                 else if ( (val_Sub_Service_ID =="65200ef56be397bb4110088e"))
-    //                 {
-    //                     //#region bus_full_day_booking
-    //                     // tbl_Model = require("../../models/business_prices_log");
-    //                     // recievedData = new tbl_Model({
-    //                     //     Updated_By: val_Updated_By,
-    //                     //     Updated_DateTime: now_DateTime.get_DateTime(),
-    //                     //     Is_Suspended: val_Is_Suspended
-    //                     // },{ new: true});
-
-    //                     // var Business_Bus_Trip_Full_Day_Details_Log_Model = require("../../models/business_bus_trip_full_day_details_log");
-    //                     // recievedData_bus_full_day_booking = new Business_Bus_Trip_Full_Day_Details_Log_Model({
-    //                     //     Updated_By: val_Updated_By,
-    //                     //     Updated_DateTime: now_DateTime.get_DateTime(),
-    //                     //     Is_Suspended: val_Is_Suspended
-    //                     // },{ new: true});
-    //                     //#endregion
-    //                 }
-    //                 else if ( (val_Sub_Service_ID =="65200ef56be397bb41100891"))
-    //                 {
-    //                     //#region schedule_valet
-    //                     var Business_Valet_Schedule_Details_Log_Model = require("../../models/business_valet_schedule_details_log");
-    //                     recievedData_schedule_valet = new Business_Valet_Schedule_Details_Log_Model({
-    //                         Updated_By: val_Updated_By,
-    //                         Updated_DateTime: now_DateTime.get_DateTime(),
-    //                         Is_Suspended: val_Is_Suspended
-    //                     },{ new: true});
-    //                     //#endregion
-    //                 }
-    //                 //#endregion
-
-
-    //             }
-    //         })
-
-
-    //         // //#region Set Models Objects Variables
-    //         // tbl_Model = require("../../models/business_prices_log");
-    //         // val_Table_Name = "business_prices_log";
-    //         // //#endregion
-
-    //         // new Promise(async (resolve, reject)=>{
-    //         //     let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("business_prices_log",val_ID);
-    //         //     resolve(returnedList);
-    //         // }).then((returned_ID) => {
-    //         //     if (!returned_ID) {
-    //         //         //#region ID is not exist in DB msg 75
-    //         //         new Promise(async (resolve, reject)=>{
-    //         //             var result = await fun_handled_messages.get_handled_message(langTitle,75);
-    //         //             resolve(result);
-    //         //         }).then((msg) => {        
-    //         //             res.status(400).json({ data: [] , message: msg, status: "wrong id" });
-    //         //         })
-    //         //         //#endregion
-    //         //     } else {
-    //         //         //#region update process
-    //         //         let recievedData = new tbl_Model({
-    //         //             Updated_By: val_Updated_By,
-    //         //             Updated_DateTime: now_DateTime.get_DateTime(),
-    //         //             Is_Suspended: val_Is_Suspended
-    //         //         },{ new: true});
-
-    //         //         new Promise(async (resolve, reject)=>{
-    //         //             const newList = await tbl_Service.update_DataRow("business_prices_log",val_ID, recievedData);
-    //         //             resolve(newList);
-    //         //         }).then((update_Flg) => {
-    //         //             if (!update_Flg) {
-    //         //                 //#region msg 2 update process failed
-    //         //                 new Promise(async (resolve, reject)=>{
-    //         //                     let result = await fun_handled_messages.get_handled_message(langTitle,2);
-    //         //                     resolve(result);
-    //         //                 }).then((msg) => {
-    //         //                     res.status(400).json({ data: [] , message: msg , status: "update failed" }); 
-    //         //                 })
-    //         //                 //#endregion
-    //         //             } else {
-    //         //                 //#region msg update process successed
-    //         //                 new Promise(async (resolve, reject)=>{
-    //         //                     var result = await fun_handled_messages.get_handled_message(langTitle,427);
-    //         //                     resolve(result);
-    //         //                 }).then((msg) => {
-    //         //                     res.status(200).json({ data: update_Flg , message: msg , status: "updated successed" });
-    //         //                 })
-    //         //                 //#endregion
-    //         //             }
-    //         //         })
-    //         //         //#endregion
-    //         //     }
-    //         // })
-
-    //         //#endregion
-    //     }    
-    //     else {
-    //         //#region Client_Prices_Log
+            //#endregion
+        }    
+        else {
+            //#region Client_Prices_Log
             
-    //         //#region Set Models Objects Variables
-    //         tbl_Model = require("../../models/client_prices_log");
-    //         val_Table_Name = "client_prices_log";
-    //         //#endregion
+            //#region Set Models Objects Variables
+            tbl_Model = require("../../models/client_prices_log");
+            val_Table_Name = "client_prices_log";
+            //#endregion
 
-    //         new Promise(async (resolve, reject)=>{
-    //             let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("client_prices_log",val_ID);
-    //             resolve(returnedList);
-    //         }).then((returned_ID) => {
-    //             if (!returned_ID) {
-    //                 //#region ID is not exist in DB msg 75
-    //                 new Promise(async (resolve, reject)=>{
-    //                     var result = await fun_handled_messages.get_handled_message(langTitle,75);
-    //                     resolve(result);
-    //                 }).then((msg) => {        
-    //                     res.status(400).json({ data: [] , message: msg, status: "wrong id" });
-    //                 })
-    //                 //#endregion
-    //             } else {
-    //                 //#region update process
-    //                 let recievedData = new tbl_Model({
-    //                     Updated_By: val_Updated_By,
-    //                     Updated_DateTime: now_DateTime.get_DateTime(),
-    //                     Is_Suspended: val_Is_Suspended
-    //                 },{ new: true});
+            new Promise(async (resolve, reject)=>{
+                let returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("client_prices_log",val_ID);
+                resolve(returnedList);
+            }).then((returned_ID) => {
+                if (!returned_ID) {
+                    //#region ID is not exist in DB msg 14
+                    new Promise(async (resolve, reject)=>{
+                        var result = await fun_handled_messages.get_handled_message(langTitle,14);
+                        resolve(result);
+                    }).then((msg) => {        
+                        res.status(400).json({ data: [] , message: msg, status: "wrong id" });
+                    })
+                    //#endregion
+                } else {
+                    //#region update process
+                    let recievedData = new tbl_Model({
+                        Updated_By: val_Updated_By,
+                        Updated_DateTime: now_DateTime.get_DateTime(),
+                        Is_Suspended: val_Is_Suspended
+                    },{ new: true});
 
-    //                 new Promise(async (resolve, reject)=>{
-    //                     const newList = await tbl_Service.update_DataRow("client_prices_log",val_ID, recievedData);
-    //                     resolve(newList);
-    //                 }).then((update_Flg) => {
-    //                     if (!update_Flg) {
-    //                         //#region msg 2 update process failed
-    //                         new Promise(async (resolve, reject)=>{
-    //                             let result = await fun_handled_messages.get_handled_message(langTitle,2);
-    //                             resolve(result);
-    //                         }).then((msg) => {
-    //                             res.status(400).json({ data: [] , message: msg , status: "update failed" }); 
-    //                         })
-    //                         //#endregion
-    //                     } else {
-    //                         //#region msg update process successed
-    //                         new Promise(async (resolve, reject)=>{
-    //                             var result = await fun_handled_messages.get_handled_message(langTitle,428);
-    //                             resolve(result);
-    //                         }).then((msg) => {
-    //                             res.status(200).json({ data: update_Flg , message: msg , status: "updated successed" });
-    //                         })
-    //                         //#endregion
-    //                     }
-    //                 })
-    //                 //#endregion
-    //             }
-    //         })
+                    new Promise(async (resolve, reject)=>{
+                        const newList = await fun_update_row.update_row(val_ID, "client_prices_log", recievedData , false);
+                        resolve(newList);
+                    }).then((update_Flg) => {
+                        if (!update_Flg) {
+                            //#region msg 2 update process failed
+                            new Promise(async (resolve, reject)=>{
+                                let result = await fun_handled_messages.get_handled_message(langTitle,2);
+                                resolve(result);
+                            }).then((msg) => {
+                                res.status(400).json({ data: [] , message: msg , status: "update failed" }); 
+                            })
+                            //#endregion
+                        } else {
+                            //#region msg update process successed
+                            new Promise(async (resolve, reject)=>{
+                                var result = await fun_handled_messages.get_handled_message(langTitle,318);
+                                resolve(result);
+                            }).then((msg) => {
+                                res.status(200).json({ data: update_Flg , message: msg , status: "updated successed" });
+                            })
+                            //#endregion
+                        }
+                    })
+                    //#endregion
+                }
+            })
 
-    //         //#endregion
-    //     }
+            //#endregion
+        }
         
-    // } catch (err) {
-    //     logger.error(err.message);
-    //     res.status(500).json({ data:[] , message:err.message , status: "error" });
-    // }
+    } catch (err) {
+        logger.error(err.message);
+        res.status(500).json({ data:[] , message:err.message , status: "error" });
+    }
 
 };
 
@@ -1516,11 +1402,98 @@ exports.updateMany_Rows_Data =  async(req, res) => {
     try {
         //#region Global Variables
         langTitle = req.params.langTitle;
-        var val_Price_Type = req.body.Price_Type;
         var status = req.params.status;
+        var val_Prices_Data= req.body.Prices_Data;
+        var val_Id = "";
+        var val_Price_Type = "";
         var val_Updated_By = req.body.Updated_By;
+        var Business_Prices_Data = [];
+        var Client_Prices_Data = [];
+        var check_Business_Prices = [];
+        var check_Client_Prices = [];
         //#endregion
         
+        val_Prices_Data.forEach(item => {
+            
+            //#region Set Variables
+            val_Price_Type = item.Price_Type;
+            val_Id = item.Id;
+            //#endregion
+
+            if (val_Price_Type=="business") {
+                const savePromise_1 = new Promise(async(resolve, reject) => {
+                    var returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("business_prices_log",val_Id);
+                    resolve(returnedList);
+                });
+                Business_Prices_Data.push(val_Id);
+                check_Business_Prices.push(savePromise_1);
+            } else {
+                const savePromise_2 = new Promise(async(resolve, reject) => {
+                    var returnedList = await fun_check_Existancy_By_ID.check_Existancy_By_ID("client_prices_log",val_Id);
+                    resolve(returnedList);
+                });
+                Client_Prices_Data.push(val_Id);
+                check_Client_Prices.push(savePromise_2);
+            }
+
+        });
+        
+        Promise.all([ Promise.all(check_Business_Prices) , Promise.all(check_Client_Prices) ]).then((results) => {
+            
+            var check_ID_Existancy_Flag = true;
+
+            for (let i = 0; i < results.length; i++) 
+            {
+                for (let j = 0; j < results[i].length; j++)
+                {
+                    if (!results[i][j]) {
+                        check_ID_Existancy_Flag = false;                        
+                    }
+                }
+            }
+
+            if (!check_ID_Existancy_Flag) {
+                //#region ID is not exist in DB msg 14
+                new Promise(async (resolve, reject)=>{
+                    var result = await fun_handled_messages.get_handled_message(langTitle,14);
+                    resolve(result);
+                }).then((msg) => {        
+                    res.status(400).json({ data: [] , message: msg, status: "wrong id" });
+                })
+                //#endregion
+            } else {
+                let business_prices_Check_ID_Promise = new Promise(async (resolve, reject)=>{
+                    var exist = await fun_Update_Suspend_Status_Many_Rows.Update_Suspend_Status_Many_Rows("suspend" , Business_Prices_Data , val_Updated_By , "business_prices_log");
+                    resolve(exist);
+                });
+                let client_prices_Check_ID_Promise = new Promise(async (resolve, reject)=>{
+                    var exist = await fun_Update_Suspend_Status_Many_Rows.Update_Suspend_Status_Many_Rows("suspend" , Client_Prices_Data , val_Updated_By , "client_prices_log");
+                    resolve(exist);
+                });
+                Promise.all([business_prices_Check_ID_Promise,client_prices_Check_ID_Promise]).then((Records_Updated) => {
+                    if(!Records_Updated){
+                        //#region msg update process failed
+                        new Promise(async (resolve, reject)=>{
+                            var result = await fun_handled_messages.get_handled_message(langTitle,2);
+                            resolve(result);
+                        }).then((msg) => {
+                            res.status(400).json({ data: [] , message: msg , status: "update failed" });    
+                        })          
+                        //#endregion
+                    }else{
+                        //#region msg update process successed
+                        new Promise(async (resolve, reject)=>{
+                        var result = await fun_handled_messages.get_handled_message(langTitle,320);
+                            resolve(result);
+                        }).then((msg) => {           
+                            res.status(200).json({ data: Records_Updated , message: msg , status: "updated successed" });
+                        })
+                        //#endregion
+                    }
+                })
+            }
+
+        })
 
     } catch (err) {
         logger.error(err.message);

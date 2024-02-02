@@ -94,99 +94,167 @@ exports.insert_discount =  async(req, res) => {
                 //#endregion
             } else {
                 //#region ID exist in DB
-                new Promise(async (resolve, reject)=>{
-                    const newList = await tbl_Service.check_Existancy("insert" , "" , val_Method_Title_En  , val_Method_Title_Ar , val_Discount_Type_ID);
+
+                let check_Title_En_Existancy_Promise = new Promise(async (resolve, reject)=>{
+                    const newList = await tbl_Service.check_Title_En_Existancy("insert" , "" , val_Method_Title_En );
                     resolve(newList);
-                }).then((Exist_Flg) => {
-                    if (Exist_Flg.length>0) {
-                        //#region row already exist
-                        if (!Exist_Flg[0].Is_Suspended) {
+                });
+        
+                let check_Title_Ar_Existancy_Promise = new Promise(async (resolve, reject)=>{
+                    const newList = await tbl_Service.check_Title_Ar_Existancy("insert" , "" , val_Method_Title_Ar );
+                    resolve(newList);
+                });
+                Promise.all([check_Title_En_Existancy_Promise , check_Title_Ar_Existancy_Promise]).then((results) => {
+                    
+                    //#region check Title_En
+                    if (results[0].length>0) {
+                        //#region Title_En already exist
+                        if (!results[0][0].Is_Suspended) {
                             //#region row already exist and active
                             new Promise(async (resolve, reject)=>{
-                                let result = await fun_handled_messages.get_handled_message(langTitle,252);
+                                let result = await fun_handled_messages.get_handled_message(langTitle,288);
                                 resolve(result);
                             }).then((msg) => {
-                                res.status(200).json({ data: Exist_Flg , message: msg , status: "already exist activated" });
+                                res.status(200).json({ data: results[0][0] , message: msg , status: "already exist activated" });
                             })
                             //#endregion
                         } else {
                             //#region row already exist and suspended
                             new Promise(async (resolve, reject)=>{
-                                let result = await fun_handled_messages.get_handled_message(langTitle,253);
+                                let result = await fun_handled_messages.get_handled_message(langTitle,289);
                                 resolve(result);
                             }).then((msg) => {
-                                res.status(200).json({ data: Exist_Flg , message: msg , status: "already exist suspended" });
+                                res.status(200).json({ data: results[0][0] , message: msg , status: "already exist suspended" });
                             })
                             //#endregion
                         }
                         //#endregion
-                    } else {
+                    }
+                    //#endregion
 
-                        //#region prepare Data Object for insertion
-                        var sentData = "";
-                        if (val_Discount_Type_ID=="652bb870ce64b5e00c6a8383") 
-                        {
-                            //#region Fixed Value
-                            val_Fixed_Rate = req.body.Fixed_Rate;
-                            sentData = new tbl_Model({
-                                Serial_Number: val_Serial_Number,
-                                Method_Title_En: val_Method_Title_En,
-                                Method_Title_Ar: val_Method_Title_Ar,
-                                Discount_Type_ID: new ObjectId(val_Discount_Type_ID),
-                                Fixed_Rate:val_Fixed_Rate,
-                                Inserted_By: val_Inserted_By,
-                                Inserted_DateTime: now_DateTime.get_DateTime(),
-                                Is_Suspended: false
-                            });
+                    //#region check Title_Ar
+                    else if (results[1].length>0) {
+                        //#region Title_Ar already exist
+                        if (!results[1][0].Is_Suspended) {
+                            //#region row already exist and active
+                            new Promise(async (resolve, reject)=>{
+                                let result = await fun_handled_messages.get_handled_message(langTitle,290);
+                                resolve(result);
+                            }).then((msg) => {
+                                res.status(200).json({ data: results[1][0] , message: msg , status: "already exist activated" });
+                            })
                             //#endregion
-                        } 
-                        else if (val_Discount_Type_ID=="652bb870ce64b5e00c6a8384") 
-                        {
-                            //#region Percentage
-                            val_Percentage_Rate = req.body.Percentage_Rate;
-                            sentData = new tbl_Model({
-                                Serial_Number: val_Serial_Number,
-                                Method_Title_En: val_Method_Title_En,
-                                Method_Title_Ar: val_Method_Title_Ar,
-                                Discount_Type_ID: new ObjectId(val_Discount_Type_ID),
-                                Percentage_Rate:val_Percentage_Rate,
-                                Inserted_By: val_Inserted_By,
-                                Inserted_DateTime: now_DateTime.get_DateTime(),
-                                Is_Suspended: false
-                            });
+                        } else {
+                            //#region row already exist and suspended
+                            new Promise(async (resolve, reject)=>{
+                                let result = await fun_handled_messages.get_handled_message(langTitle,291);
+                                resolve(result);
+                            }).then((msg) => {
+                                res.status(200).json({ data: results[1][0] , message: msg , status: "already exist suspended" });
+                            })
                             //#endregion
                         }
                         //#endregion
+                    }
+                    //#endregion
 
-                        //#region insert directly
+                    else {
                         new Promise(async (resolve, reject)=>{
-                            const newList = await fun_insert_row.insert_row("discount_method_lkp",sentData);
+                            const newList = await tbl_Service.check_Existancy("insert" , "" , val_Method_Title_En  , val_Method_Title_Ar , val_Discount_Type_ID);
                             resolve(newList);
-                        }).then((inserted_Flag) => {
-                            if (!inserted_Flag) {
-                                //#region msg 1 insert process failed
-                                new Promise(async (resolve, reject)=>{
-                                let result = await fun_handled_messages.get_handled_message(langTitle,1);
-                                resolve(result);
-                                }).then((msg) => {
-                                res.status(400).json({ data: [] , message: msg , status: "insert failed" });
-                                })
+                        }).then((Exist_Flg) => {
+                            if (Exist_Flg.length>0) {
+                                //#region row already exist
+                                if (!Exist_Flg[0].Is_Suspended) {
+                                    //#region row already exist and active
+                                    new Promise(async (resolve, reject)=>{
+                                        let result = await fun_handled_messages.get_handled_message(langTitle,252);
+                                        resolve(result);
+                                    }).then((msg) => {
+                                        res.status(200).json({ data: Exist_Flg , message: msg , status: "already exist activated" });
+                                    })
+                                    //#endregion
+                                } else {
+                                    //#region row already exist and suspended
+                                    new Promise(async (resolve, reject)=>{
+                                        let result = await fun_handled_messages.get_handled_message(langTitle,253);
+                                        resolve(result);
+                                    }).then((msg) => {
+                                        res.status(200).json({ data: Exist_Flg , message: msg , status: "already exist suspended" });
+                                    })
+                                    //#endregion
+                                }
                                 //#endregion
                             } else {
-                                //#region insert process succeeded
+
+                                //#region prepare Data Object for insertion
+                                var sentData = "";
+                                if (val_Discount_Type_ID=="652bb870ce64b5e00c6a8383") 
+                                {
+                                    //#region Fixed Value
+                                    val_Fixed_Rate = req.body.Fixed_Rate;
+                                    sentData = new tbl_Model({
+                                        Serial_Number: val_Serial_Number,
+                                        Method_Title_En: val_Method_Title_En,
+                                        Method_Title_Ar: val_Method_Title_Ar,
+                                        Discount_Type_ID: new ObjectId(val_Discount_Type_ID),
+                                        Fixed_Rate:val_Fixed_Rate,
+                                        Inserted_By: val_Inserted_By,
+                                        Inserted_DateTime: now_DateTime.get_DateTime(),
+                                        Is_Suspended: false
+                                    });
+                                    //#endregion
+                                } 
+                                else if (val_Discount_Type_ID=="652bb870ce64b5e00c6a8384") 
+                                {
+                                    //#region Percentage
+                                    val_Percentage_Rate = req.body.Percentage_Rate;
+                                    sentData = new tbl_Model({
+                                        Serial_Number: val_Serial_Number,
+                                        Method_Title_En: val_Method_Title_En,
+                                        Method_Title_Ar: val_Method_Title_Ar,
+                                        Discount_Type_ID: new ObjectId(val_Discount_Type_ID),
+                                        Percentage_Rate:val_Percentage_Rate,
+                                        Inserted_By: val_Inserted_By,
+                                        Inserted_DateTime: now_DateTime.get_DateTime(),
+                                        Is_Suspended: false
+                                    });
+                                    //#endregion
+                                }
+                                //#endregion
+
+                                //#region insert directly
                                 new Promise(async (resolve, reject)=>{
-                                    var result = await fun_handled_messages.get_handled_message(langTitle,254);
-                                    resolve(result);
-                                }).then((msg) => {
-                                    res.status(200).json({ data: inserted_Flag , message: msg , status: "insert successed" });                            
+                                    const newList = await fun_insert_row.insert_row("discount_method_lkp",sentData);
+                                    resolve(newList);
+                                }).then((inserted_Flag) => {
+                                    if (!inserted_Flag) {
+                                        //#region msg 1 insert process failed
+                                        new Promise(async (resolve, reject)=>{
+                                        let result = await fun_handled_messages.get_handled_message(langTitle,1);
+                                        resolve(result);
+                                        }).then((msg) => {
+                                        res.status(400).json({ data: [] , message: msg , status: "insert failed" });
+                                        })
+                                        //#endregion
+                                    } else {
+                                        //#region insert process succeeded
+                                        new Promise(async (resolve, reject)=>{
+                                            var result = await fun_handled_messages.get_handled_message(langTitle,254);
+                                            resolve(result);
+                                        }).then((msg) => {
+                                            res.status(200).json({ data: inserted_Flag , message: msg , status: "insert successed" });                            
+                                        })
+                                        //#endregion
+                                    }
                                 })
                                 //#endregion
+
                             }
                         })
-                        //#endregion
-
                     }
                 })
+            
                 //#endregion
             }
         })
@@ -226,69 +294,136 @@ exports.update_Row =  async(req, res) => {
                 //#endregion
             } else {
                 //#region ID exist in DB
-                new Promise(async (resolve, reject)=>{
-                    const newList = await tbl_Service.check_Existancy("update" , val_ID , val_Method_Title_En  , val_Method_Title_Ar , val_Discount_Type_ID);
+                let check_Title_En_Existancy_Promise = new Promise(async (resolve, reject)=>{
+                    const newList = await tbl_Service.check_Title_En_Existancy("update" , "" , val_Method_Title_En );
                     resolve(newList);
-                }).then((Exist_Flg) => {
-                    if (Exist_Flg.length>0) {
-                        //#region row already exist
-                        if (!Exist_Flg[0].Is_Suspended) {
+                });
+        
+                let check_Title_Ar_Existancy_Promise = new Promise(async (resolve, reject)=>{
+                    const newList = await tbl_Service.check_Title_Ar_Existancy("update" , "" , val_Method_Title_Ar );
+                    resolve(newList);
+                });
+                Promise.all([check_Title_En_Existancy_Promise , check_Title_Ar_Existancy_Promise]).then((results) => {
+                    
+                    //#region check Title_En
+                    if (results[0].length>0) {
+                        //#region Title_En already exist
+                        if (!results[0][0].Is_Suspended) {
                             //#region row already exist and active
                             new Promise(async (resolve, reject)=>{
-                                let result = await fun_handled_messages.get_handled_message(langTitle,252);
+                                let result = await fun_handled_messages.get_handled_message(langTitle,288);
                                 resolve(result);
                             }).then((msg) => {
-                                res.status(200).json({ data: Exist_Flg , message: msg , status: "already exist activated" });
+                                res.status(200).json({ data: results[0][0] , message: msg , status: "already exist activated" });
                             })
                             //#endregion
                         } else {
                             //#region row already exist and suspended
                             new Promise(async (resolve, reject)=>{
-                                let result = await fun_handled_messages.get_handled_message(langTitle,253);
+                                let result = await fun_handled_messages.get_handled_message(langTitle,289);
                                 resolve(result);
                             }).then((msg) => {
-                                res.status(200).json({ data: Exist_Flg , message: msg , status: "already exist suspended" });
+                                res.status(200).json({ data: results[0][0] , message: msg , status: "already exist suspended" });
                             })
                             //#endregion
                         }
                         //#endregion
-                    } else {
-                        //#region update process
-                        let recievedData = new tbl_Model({
-                            Method_Title_En: val_Method_Title_En,
-                            Method_Title_Ar: val_Method_Title_Ar,
-                            Updated_By: val_Updated_By,
-                            Updated_DateTime: now_DateTime.get_DateTime(),
-                            Is_Suspended: val_Is_Suspended
-                        },{ new: true});
-                        
+                    }
+                    //#endregion
+
+                    //#region check Title_Ar
+                    else if (results[1].length>0) {
+                        //#region Title_Ar already exist
+                        if (!results[1][0].Is_Suspended) {
+                            //#region row already exist and active
+                            new Promise(async (resolve, reject)=>{
+                                let result = await fun_handled_messages.get_handled_message(langTitle,290);
+                                resolve(result);
+                            }).then((msg) => {
+                                res.status(200).json({ data: results[1][0] , message: msg , status: "already exist activated" });
+                            })
+                            //#endregion
+                        } else {
+                            //#region row already exist and suspended
+                            new Promise(async (resolve, reject)=>{
+                                let result = await fun_handled_messages.get_handled_message(langTitle,291);
+                                resolve(result);
+                            }).then((msg) => {
+                                res.status(200).json({ data: results[1][0] , message: msg , status: "already exist suspended" });
+                            })
+                            //#endregion
+                        }
+                        //#endregion
+                    }
+                    //#endregion
+
+                    else {
                         new Promise(async (resolve, reject)=>{
-                            const newList = await fun_update_row.update_row(val_ID, "discount_method_lkp", recievedData , false);
+                            const newList = await tbl_Service.check_Existancy("update" , val_ID , val_Method_Title_En  , val_Method_Title_Ar , val_Discount_Type_ID);
                             resolve(newList);
-                        }).then((update_flg) => {
-                            if (!update_flg) {
-                                //#region msg 2 update process failed
+                        }).then((Exist_Flg) => {
+                            if (Exist_Flg.length>0) {
+                                //#region row already exist
+                                if (!Exist_Flg[0].Is_Suspended) {
+                                    //#region row already exist and active
                                     new Promise(async (resolve, reject)=>{
-                                        let result = await fun_handled_messages.get_handled_message(langTitle,2);
+                                        let result = await fun_handled_messages.get_handled_message(langTitle,252);
                                         resolve(result);
                                     }).then((msg) => {
-                                        res.status(400).json({ data: [] , message: msg , status: "update failed" });    
-                                    })          
-                                    //#endregion
-                            } else {
-                                //#region msg update process successed
-                                    new Promise(async (resolve, reject)=>{
-                                        var result = await fun_handled_messages.get_handled_message(langTitle,258);
-                                        resolve(result);
-                                    }).then((msg) => {
-                                        res.status(200).json({ data: update_flg , message: msg , status: "updated successed" });                            
+                                        res.status(200).json({ data: Exist_Flg , message: msg , status: "already exist activated" });
                                     })
+                                    //#endregion
+                                } else {
+                                    //#region row already exist and suspended
+                                    new Promise(async (resolve, reject)=>{
+                                        let result = await fun_handled_messages.get_handled_message(langTitle,253);
+                                        resolve(result);
+                                    }).then((msg) => {
+                                        res.status(200).json({ data: Exist_Flg , message: msg , status: "already exist suspended" });
+                                    })
+                                    //#endregion
+                                }
+                                //#endregion
+                            } else {
+                                //#region update process
+                                let recievedData = new tbl_Model({
+                                    Method_Title_En: val_Method_Title_En,
+                                    Method_Title_Ar: val_Method_Title_Ar,
+                                    Updated_By: val_Updated_By,
+                                    Updated_DateTime: now_DateTime.get_DateTime(),
+                                    Is_Suspended: val_Is_Suspended
+                                },{ new: true});
+                                
+                                new Promise(async (resolve, reject)=>{
+                                    const newList = await fun_update_row.update_row(val_ID, "discount_method_lkp", recievedData , false);
+                                    resolve(newList);
+                                }).then((update_flg) => {
+                                    if (!update_flg) {
+                                        //#region msg 2 update process failed
+                                            new Promise(async (resolve, reject)=>{
+                                                let result = await fun_handled_messages.get_handled_message(langTitle,2);
+                                                resolve(result);
+                                            }).then((msg) => {
+                                                res.status(400).json({ data: [] , message: msg , status: "update failed" });    
+                                            })          
+                                            //#endregion
+                                    } else {
+                                        //#region msg update process successed
+                                            new Promise(async (resolve, reject)=>{
+                                                var result = await fun_handled_messages.get_handled_message(langTitle,258);
+                                                resolve(result);
+                                            }).then((msg) => {
+                                                res.status(200).json({ data: update_flg , message: msg , status: "updated successed" });                            
+                                            })
+                                        //#endregion
+                                    }
+                                })
                                 //#endregion
                             }
                         })
-                        //#endregion
                     }
                 })
+                
                 //#endregion
             }
         })

@@ -1145,3 +1145,35 @@ exports.update_Password = async (val_User_ID , val_Updated_By , Val_Password ) =
         logger.error(error.message);
     }
 };
+
+
+
+
+exports.check_Business_Sub_Services_Settings_Log_Existancy = async (val_Sub_Service_ID,val_User_ID,val_Discount_ID) => {
+
+    try {
+        const return_Data = [];
+        let itemsCount = "";
+        var business_sub_services_settings_log_Model = require("../models/business_sub_services_settings_log");
+        itemsCount = await business_sub_services_settings_log_Model.find({
+            $and: [
+                { Sub_Service_ID: val_Sub_Service_ID },
+                { User_ID: val_User_ID },
+                { Discount_ID: val_Discount_ID }
+            ]
+        });
+
+        if (itemsCount.length<=0) {
+            return_Data[0]= "";
+            return_Data[1]= false;
+        } else {
+            return_Data[0]= itemsCount[0]._id;
+            return_Data[1]= true;
+        }
+        
+        return return_Data;
+    } catch (error) {
+        console.log(error.message);
+    }
+
+};
